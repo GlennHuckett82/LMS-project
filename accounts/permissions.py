@@ -1,4 +1,6 @@
 from rest_framework.permissions import BasePermission
+from rest_framework.exceptions import NotFound
+from courses.models import Course
 
 class IsAdmin(BasePermission):
     """
@@ -50,3 +52,34 @@ class IsOwnerOrAdmin(BasePermission):
         # Otherwise, the user must be the teacher of the course.
         # The 'obj' here is the Course instance.
         return obj.teacher == request.user
+
+class IsCourseTeacherOrAdmin(BasePermission):
+    """
+    Custom permission to only allow the teacher of a course or an admin.
+    
+    I'm creating this to check permissions at the view level, before an object
+    has been fetched. It looks up the course from the URL and checks if the
+    requesting user is either the course's teacher or an admin.
+    """
+    def has_permission(self, request, view):
+        # The user must be authenticated to proceed.
+        if not request.user or not request.user.is_authenticated:
+            return False
+        
+        # Admins are always allowed.
+        if request.user.role == 'admin':
+            return True
+        
+        # Get the course from the URL.
+        course_pk = view.kwargs.get('course_pk')
+        if not course_pk:
+            return False # Should not happen if URL is configured correctly.
+
+        try:
+            course = Course.objects.get(pk=course_pk)
+        except Course.DoesNotExist:
+            # The view will handle the 404, but we deny permission.
+            return False
+
+        # Check if the user is the teacher of the course.
+        return course.teacher == request.user
