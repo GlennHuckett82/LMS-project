@@ -2,7 +2,8 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Course
 from .serializers import CourseSerializer
-from accounts.permissions import IsTeacher, IsOwnerOrAdmin
+from accounts.permissions import IsTeacherOrAdmin, IsOwnerOrAdmin
+from rest_framework.exceptions import ValidationError
 
 class CourseListCreateView(generics.ListCreateAPIView):
     """
@@ -23,18 +24,37 @@ class CourseListCreateView(generics.ListCreateAPIView):
         but 'POST' requests (creating a course) are restricted to teachers.
         """
         if self.request.method == 'POST':
-            return [IsAuthenticated(), IsTeacher()]
+            # Allow teachers and admins to create courses.
+            return [IsAuthenticated(), IsTeacherOrAdmin()]
         return []
 
     def perform_create(self, serializer):
-        """
-        Called when a new course is being created.
+        """Assign teacher intelligently on course creation.
 
-        This is overridden to automatically assign the currently logged-in
-        teacher as the teacher of the new course. The frontend doesn't need
-        to send the teacher's ID; it's handled securely on the backend.
+        Rules:
+        - If the user is a teacher: they become the course teacher (ignore any provided teacher field).
+        - If the user is an admin: they may optionally supply a "teacher" id for a valid teacher; otherwise
+          the admin themselves is NOT set as teacher (must provide teacher id) to avoid mixing roles.
         """
-        serializer.save(teacher=self.request.user)
+        user = self.request.user
+        # Teacher creating their own course.
+        if getattr(user, 'role', None) == 'teacher':
+            serializer.save(teacher=user)
+            return
+
+        # Admin path: accept teacher id if valid.
+        if getattr(user, 'role', None) == 'admin':
+            teacher_id = self.request.data.get('teacher')
+            if teacher_id:
+                from accounts.models import User  # local import to avoid circular issues at module load
+                try:
+                    teacher = User.objects.get(id=teacher_id, role='teacher')
+                    serializer.save(teacher=teacher)
+                    return
+                except User.DoesNotExist:
+                    pass
+        # Fallback: no valid teacher supplied by admin.
+        raise ValidationError({'teacher': 'Admin must supply a valid teacher id when creating a course.'})
 
 
 class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):

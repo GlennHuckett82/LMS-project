@@ -38,6 +38,21 @@ class IsStudent(BasePermission):
         # Check for authentication and the 'student' role.
         return request.user and request.user.is_authenticated and request.user.role == 'student'
 
+class IsTeacherOrAdmin(BasePermission):
+    """
+    Allow access if the authenticated user is either a teacher or an admin.
+
+    This consolidates course creation and similar actions where both roles
+    should be permitted. It avoids stacking two separate permission classes
+    and makes intent explicit.
+    """
+    def has_permission(self, request, view):
+        return bool(
+            request.user and request.user.is_authenticated and (
+                request.user.role == 'teacher' or request.user.role == 'admin'
+            )
+        )
+
 class IsOwnerOrAdmin(BasePermission):
     """
     Custom permission to only allow owners of an object or admins to edit it.
