@@ -1,6 +1,8 @@
 from rest_framework.permissions import BasePermission
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.exceptions import NotFound
 from courses.models import Course
+from lessons.models import Lesson
 
 class IsAdmin(BasePermission):
     """
@@ -83,3 +85,20 @@ class IsCourseTeacherOrAdmin(BasePermission):
 
         # Check if the user is the teacher of the course.
         return course.teacher == request.user
+
+class IsLessonTeacherOrAdmin(BasePermission):
+    """
+    Allow modification if the user is the lesson's course teacher or an admin.
+    Read-only access is allowed for everyone.
+    """
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
+        return bool(request.user and request.user.is_authenticated)
+
+    def has_object_permission(self, request, view, obj):
+        if not isinstance(obj, Lesson):
+            return False
+        if request.user and request.user.is_authenticated and getattr(request.user, "role", None) == 'admin':
+            return True
+        return obj.course.teacher == request.user
