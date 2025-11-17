@@ -34,6 +34,7 @@ class Enrollment(models.Model):
         ]
         verbose_name = 'Enrollment'
         verbose_name_plural = 'Enrollments'
+        ordering = ['id']
 
     def __str__(self):
         """

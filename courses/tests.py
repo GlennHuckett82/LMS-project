@@ -64,13 +64,34 @@ class CourseAPITests(APITestCase):
         new_course = Course.objects.get(title='Advanced Django')
         self.assertEqual(new_course.teacher, self.teacher1)
 
+    def test_admin_create_course_requires_teacher(self):
+        """Admin must specify a teacher id; missing should fail."""
+        self.client.force_authenticate(user=self.admin)
+        data = {'title': 'Admin Attempt', 'description': 'No teacher supplied'}
+        resp = self.client.post(self.list_create_url, data)
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('teacher', resp.data)
+
+    def test_admin_can_create_course_with_teacher(self):
+        """Admin specifying a valid teacher id succeeds and assigns that teacher."""
+        self.client.force_authenticate(user=self.admin)
+        data = {
+            'title': 'Admin Created',
+            'description': 'With teacher',
+            'teacher': self.teacher2.id
+        }
+        resp = self.client.post(self.list_create_url, data)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        course = Course.objects.get(title='Admin Created')
+        self.assertEqual(course.teacher, self.teacher2)
+
     def test_anyone_can_list_courses(self):
         """
         Verify that listing courses is open to everyone.
         """
         response = self.client.get(self.list_create_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data['results']), 1)
 
     def test_anyone_can_retrieve_course(self):
         """

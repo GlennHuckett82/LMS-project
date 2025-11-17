@@ -3,6 +3,7 @@ from rest_framework.permissions import SAFE_METHODS
 from rest_framework.exceptions import NotFound
 from courses.models import Course
 from lessons.models import Lesson
+from enrollments.models import Enrollment
 
 class IsAdmin(BasePermission):
     """
@@ -107,13 +108,21 @@ class IsLessonTeacherOrAdmin(BasePermission):
     Read-only access is allowed for everyone.
     """
     def has_permission(self, request, view):
+        # Require authentication for any write; reads will be further checked per-object/view.
         if request.method in SAFE_METHODS:
-            return True
+            return bool(request.user and request.user.is_authenticated)
         return bool(request.user and request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
         if not isinstance(obj, Lesson):
             return False
+        # Admin can read/write any lesson.
         if request.user and request.user.is_authenticated and getattr(request.user, "role", None) == 'admin':
             return True
-        return obj.course.teacher == request.user
+        # Course teacher can read/write their lessons.
+        if obj.course.teacher == request.user:
+            return True
+        # For SAFE methods (read), allow if the user is enrolled in the course.
+        if request.method in SAFE_METHODS:
+            return Enrollment.objects.filter(student=request.user, course=obj.course).exists()
+        return False

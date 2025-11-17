@@ -71,8 +71,8 @@ class EnrollmentAPITests(APITestCase):
         self.client.force_authenticate(user=self.student1)
         response = self.client.get(self.my_enrollments_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['course']['title'], self.course1.title)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['course']['title'], self.course1.title)
 
     def test_unauthenticated_cannot_view_enrollments(self):
         """
@@ -89,8 +89,8 @@ class EnrollmentAPITests(APITestCase):
         self.client.force_authenticate(user=self.teacher1)
         response = self.client.get(self.roster_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['student']['username'], self.student1.username)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['student']['username'], self.student1.username)
 
     def test_other_teacher_cannot_view_roster(self):
         """
@@ -115,4 +115,4 @@ class EnrollmentAPITests(APITestCase):
         self.client.force_authenticate(user=self.admin)
         response = self.client.get(self.roster_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data['results']), 1)
