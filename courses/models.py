@@ -8,8 +8,10 @@ class Course(models.Model):
     Each course has a title, a detailed description, and is associated with
     a specific teacher. This model forms the core of our educational content.
     """
+
     title = models.CharField(max_length=200, verbose_name="Course Title")
     description = models.TextField(verbose_name="Course Description")
+
     # A link to the custom User model from the 'accounts' app is needed.
     # The 'on_delete=models.CASCADE' part means that if a teacher's account is deleted,
     # all of their courses will be deleted as well. This keeps the database clean.
@@ -20,6 +22,10 @@ class Course(models.Model):
         verbose_name="Teacher"
     )
 
+    # Automatically records when the course was created.
+    # This is useful for sorting, auditing, and displaying "newly added" courses.
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         """
         Returns a human-readable string representation of the course,
@@ -29,4 +35,3 @@ class Course(models.Model):
 
     class Meta:
         ordering = ['id']
-
