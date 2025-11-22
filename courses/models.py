@@ -12,9 +12,8 @@ class Course(models.Model):
     title = models.CharField(max_length=200, verbose_name="Course Title")
     description = models.TextField(verbose_name="Course Description")
 
-    # A link to the custom User model from the 'accounts' app is needed.
-    # The 'on_delete=models.CASCADE' part means that if a teacher's account is deleted,
-    # all of their courses will be deleted as well. This keeps the database clean.
+    # A link to the custom User model from the 'accounts' app.
+    # If a teacher's account is deleted, their courses are also deleted.
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -23,7 +22,6 @@ class Course(models.Model):
     )
 
     # Automatically records when the course was created.
-    # This is useful for sorting, auditing, and displaying "newly added" courses.
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
