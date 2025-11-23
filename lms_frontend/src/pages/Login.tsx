@@ -16,7 +16,7 @@ const Login: React.FC = () => {
       // Response → { refresh, access }
       // Tokens stored in localStorage by loginUser
       console.log("Logged in successfully:", data);
-      window.location.href = "/courses"; // redirect after login
+      window.location.href = "/"; // redirect to homepage after login
     } catch (err: any) {
       setError(err.message || "Login failed");
     }

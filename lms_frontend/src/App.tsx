@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";   
+import Dashboard from "./pages/Dashboard";
+import Courses from "./pages/Courses";
 
 function App() {
   return (
@@ -17,8 +18,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
-          {/* Dashboard route */}
-          <Route path="/courses" element={<Dashboard />} />
+          {/* Courses page route */}
+          <Route path="/courses" element={<Courses />} />
 
           {/* Later: protected routes for courses, lessons, etc. */}
         </Routes>
