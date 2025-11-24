@@ -11,59 +11,60 @@ from accounts.permissions import IsStudent, IsCourseTeacherOrAdmin
 
 class EnrollmentCreateView(generics.CreateAPIView):
     """
-    My API view for a student to enroll in a course.
-    
-    This is a POST-only endpoint. A student sends a request here, and if they
-    are authenticated and have the 'student' role, an enrollment record is created.
+    API view for a student to enroll in a course.
+
+    POST-only endpoint: authenticated students can enroll in a course by sending a request here.
+    If they're already enrolled, they'll get a helpful error message.
     """
     serializer_class = EnrollmentSerializer
     permission_classes = [IsAuthenticated, IsStudent]
 
     def create(self, request, *args, **kwargs):
+        # Get the course ID from the URL and fetch the course object.
         course_pk = self.kwargs.get('course_pk')
         course = get_object_or_404(Course, pk=course_pk)
         student = request.user
 
         try:
-            # The unique_constraint on the model will prevent duplicates.
+            # Try to create the enrollment. If the student is already enrolled, the unique constraint will raise an error.
             Enrollment.objects.create(student=student, course=course)
             return Response({'detail': 'Successfully enrolled in the course.'}, status=status.HTTP_201_CREATED)
         except IntegrityError:
-            # This happens if the unique_constraint is violated.
+            # If the student is already enrolled, return a friendly error message.
             return Response({'detail': 'You are already enrolled in this course.'}, status=status.HTTP_400_BAD_REQUEST)
 
 class StudentEnrollmentListView(generics.ListAPIView):
     """
-    My API view for a student to list their own enrollments.
-    
-    This is a GET-only endpoint that returns a list of courses the currently
-    authenticated student is enrolled in, using a dedicated serializer for it.
+    API view for a student to list their own enrollments.
+
+    GET-only endpoint: returns a list of courses the authenticated student is enrolled in.
+    Uses a dedicated serializer for clean, useful output.
     """
     serializer_class = StudentEnrollmentSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """
-        This view should return a list of all the enrollments
-        for the currently authenticated user.
+        Return all enrollments for the currently authenticated user.
+        This makes it easy for students to see what courses they're taking.
         """
         user = self.request.user
         return Enrollment.objects.filter(student=user).select_related('course', 'course__teacher')
 
 class CourseRosterListView(generics.ListAPIView):
     """
-    My API view for a teacher to see the roster of students for their course.
-    
-    This is a GET-only endpoint, protected so that only the teacher who owns
-    the course (or an admin) can view the list of enrolled students.
+    API view for a teacher to see the roster of students for their course.
+
+    GET-only endpoint: only the teacher who owns the course (or an admin) can view the list of enrolled students.
+    This helps teachers manage their classes and see who's enrolled.
     """
     serializer_class = CourseRosterSerializer
     permission_classes = [IsAuthenticated, IsCourseTeacherOrAdmin]
 
     def get_queryset(self):
         """
-        This view should return a list of all the enrollments for
-        the course specified in the URL.
+        Return all enrollments for the course specified in the URL.
+        This lets teachers see every student enrolled in their course.
         """
         course_pk = self.kwargs.get('course_pk')
         return Enrollment.objects.filter(course__pk=course_pk).select_related('student')

@@ -8,22 +8,28 @@ from lessons.models import Lesson
 
 
 class LessonVisibilityTests(APITestCase):
-	"""Ensure lesson content access is restricted to enrolled students, teacher, or admin."""
+	"""
+	Test suite to make sure lesson content is only accessible to enrolled students, the course teacher, or an admin.
+
+	These tests check that permissions are enforced for reading and updating lessons, so only the right users can access or modify lesson content.
+	"""
 
 	def setUp(self):
+		# Create users for each role: teacher, enrolled student, not enrolled student, and admin.
 		self.teacher = User.objects.create_user(username='teacherX', password='Pass!12345', role='teacher', email='teacherX@example.com')
 		self.student_enrolled = User.objects.create_user(username='studEn', password='Pass!12345', role='student', email='studEn@example.com')
 		self.student_not_enrolled = User.objects.create_user(username='studNo', password='Pass!12345', role='student', email='studNo@example.com')
 		self.admin = User.objects.create_user(username='adminX', password='Pass!12345', role='admin', email='adminX@example.com', is_staff=True, is_superuser=True)
 
+		# Create a course and enroll one student.
 		self.course = Course.objects.create(title='Visibility Course', description='Test visibility.', teacher=self.teacher)
-		# Enroll one student
 		Enrollment.objects.create(student=self.student_enrolled, course=self.course)
 
-		# Create two lessons
+		# Create two lessons for the course.
 		self.lesson1 = Lesson.objects.create(course=self.course, title='L1', content='Content 1', order=1)
 		self.lesson2 = Lesson.objects.create(course=self.course, title='L2', content='Content 2', order=2)
 
+		# Set up detail URLs for each lesson.
 		self.detail_url_l1 = reverse('lesson-detail', kwargs={'pk': self.lesson1.pk})
 		self.detail_url_l2 = reverse('lesson-detail', kwargs={'pk': self.lesson2.pk})
 

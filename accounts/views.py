@@ -1,14 +1,16 @@
+
 from rest_framework import generics
 from .models import User
 from .serializers import UserSerializer
 
+# This view lets users register for the LMS (students, teachers, or admins).
+# It uses DRF's CreateAPIView, which handles all the details of creating a new user record.
 class UserCreate(generics.CreateAPIView):
     """
-    A view for creating new users.
+    API view for creating new users.
 
-    This view uses Django Rest Framework's generic `CreateAPIView`.
-    It's a pre-built class that handles the logic for creating a new object.
-    We just need to tell it what model and serializer to use.
+    Uses Django Rest Framework's generic CreateAPIView, so you don't have to write the logic yourself.
+    Just specify the model and serializer, and DRF takes care of the rest.
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer

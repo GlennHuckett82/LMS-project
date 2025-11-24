@@ -1,33 +1,32 @@
+
 import requests
 from faker import Faker
 
-# This is a little helper script to populate the database with some test data.
-# It's not part of the main application, just a tool for development.
+# This script helps you quickly fill your database with test users for development.
+# It's not part of the main app—just a handy tool for local testing and demos.
 
-# Let's initialize the Faker library, which will help us generate fake data.
+# We use the Faker library to generate realistic names and emails, so you don't have to make them up yourself.
 fake = Faker()
 
-# This is the URL of the registration endpoint.
-# The script will send POST requests to this URL to create new users.
+# This is the API endpoint where new users get registered.
+# We'll send POST requests here to add users to the database.
 API_URL = "http://127.0.0.1:8001/api/accounts/register/"
 
 def create_user(role):
     """
-    Creates a single user with the specified role.
-    
-    This function generates a fake username and email, then sends a POST request
-    to the API to create the user in the database. It's like simulating a user
-    signing up through a web form.
+    Create a single user with the given role (either 'teacher' or 'student').
+
+    This function makes up a name and email, then sends them to the API as if a real person was signing up.
+    It's a quick way to fill your database for testing features that need users.
     """
-    # Generate some plausible-looking user data.
+    # Make up a realistic name and email for this user.
     first_name = fake.first_name()
     last_name = fake.last_name()
     username = f"{first_name.lower()}.{last_name.lower()}{fake.random_int(min=10, max=99)}"
     email = f"{username}@example.com"
-    password = "password123"  # For testing, a simple, standard password can be used.
+    password = "password123"  # Simple password for all test users—easy to remember during development.
 
-    # This is the data payload to send in the request.
-    # It matches the fields the UserSerializer expects.
+    # Build the data dictionary to send to the API. These fields match what the backend expects.
     data = {
         "username": username,
         "email": email,
@@ -35,38 +34,41 @@ def create_user(role):
         "role": role
     }
 
-    # Now, make the request to the API.
+    # Try to send the registration request. If the server isn't running, let the developer know.
     try:
         response = requests.post(API_URL, json=data)
-        # Check if the request was successful.
+        # If the user was created, print a success message.
         if response.status_code == 201:
             print(f"Successfully created {role}: {username}")
         else:
-            # If something went wrong, the API should give some clues.
+            # If something went wrong, show the error details so it's easier to debug.
             print(f"Failed to create {role}: {username}. Status: {response.status_code}, Response: {response.json()}")
     except requests.exceptions.ConnectionError as e:
         print(f"Error connecting to the server: {e}")
-        print("Is the Django development server running? You can start it with 'python manage.py runserver'")
-        return False # Stop the script if the server can't be reached.
+        print("Is the Django development server running? Start it with 'python manage.py runserver'.")
+        return False # If we can't reach the server, stop the script so you can fix it.
     return True
 
 def main():
+
     """
-    The main function to run the user creation script.
+    This is the entry point for the script. It creates teachers and students for testing.
+
+    Run this script whenever you need fresh test users in your local database.
     """
     print("--- Starting User Population Script ---")
-    
-    # First, create 5 teachers.
+
+    # First, let's add 5 teachers to the database.
     print("\n--- Creating Teachers ---")
     for _ in range(5):
         if not create_user("teacher"):
-            break # Stop if there was a connection error.
+            break # If we hit a connection error, stop so you can fix the server.
 
-    # Next, create 20 students.
+    # Now, let's add 20 students.
     print("\n--- Creating Students ---")
     for _ in range(20):
         if not create_user("student"):
-            break # Stop if there was a connection error.
+            break # Again, stop if there's a connection problem.
             
     print("\n--- User Population Script Finished ---")
 

@@ -1,3 +1,4 @@
+
 from rest_framework.permissions import BasePermission
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.exceptions import NotFound
@@ -5,13 +6,15 @@ from courses.models import Course
 from lessons.models import Lesson
 from enrollments.models import Enrollment
 
+# This file contains custom permission classes for the LMS API.
+# Each class makes it easy to control who can access or modify different resources, using clear role-based rules.
+
 class IsAdmin(BasePermission):
     """
-    Custom permission to only allow users with the 'admin' role.
-    
-    This class checks if the user making the request is authenticated and
-    has their 'role' attribute set to 'admin'. This is how endpoints
-    that should only be accessible by administrators will be protected.
+    Only allow access to users with the 'admin' role.
+
+    Use this for endpoints that should be locked down for administrators only.
+    Checks authentication and the user's role.
     """
     def has_permission(self, request, view):
         # The user must be authenticated to have a role.
@@ -20,10 +23,9 @@ class IsAdmin(BasePermission):
 
 class IsTeacher(BasePermission):
     """
-    Custom permission to only allow users with the 'teacher' role.
-    
-    Similar to IsAdmin, but this checks for the 'teacher' role. This will be used
-    to lock down actions like creating or updating courses.
+    Only allow access to users with the 'teacher' role.
+
+    Use this for actions like creating or updating courses, so only teachers can do them.
     """
     def has_permission(self, request, view):
         # Check for authentication and the 'teacher' role.
@@ -31,9 +33,9 @@ class IsTeacher(BasePermission):
 
 class IsStudent(BasePermission):
     """
-    Custom permission to only allow users with the 'student' role.
-    
-    This is for actions that only students can perform, like enrolling in a course.
+    Only allow access to users with the 'student' role.
+
+    Use this for endpoints that only students should be able to use, like enrolling in courses.
     """
     def has_permission(self, request, view):
         # Check for authentication and the 'student' role.
@@ -41,11 +43,10 @@ class IsStudent(BasePermission):
 
 class IsTeacherOrAdmin(BasePermission):
     """
-    Allow access if the authenticated user is either a teacher or an admin.
+    Allow access if the user is either a teacher or an admin.
 
-    This consolidates course creation and similar actions where both roles
-    should be permitted. It avoids stacking two separate permission classes
-    and makes intent explicit.
+    Use this for actions where both teachers and admins should be allowed, like creating courses.
+    This keeps the code clean and makes the intent obvious.
     """
     def has_permission(self, request, view):
         return bool(
@@ -56,11 +57,9 @@ class IsTeacherOrAdmin(BasePermission):
 
 class IsOwnerOrAdmin(BasePermission):
     """
-    Custom permission to only allow owners of an object or admins to edit it.
-    
-    I'm creating this to check if the user is either the 'teacher' of a course
-    or has the 'admin' role. This is for object-level permissions, so I'll
-    implement the `has_object_permission` method.
+    Only allow editing if the user is the owner (teacher) of the object or an admin.
+
+    Use this for object-level permissions, like editing a course. Admins can always edit; teachers can edit their own courses.
     """
     def has_object_permission(self, request, view, obj):
         # Admins can do anything.
@@ -73,11 +72,9 @@ class IsOwnerOrAdmin(BasePermission):
 
 class IsCourseTeacherOrAdmin(BasePermission):
     """
-    Custom permission to only allow the teacher of a course or an admin.
-    
-    I'm creating this to check permissions at the view level, before an object
-    has been fetched. It looks up the course from the URL and checks if the
-    requesting user is either the course's teacher or an admin.
+    Only allow access if the user is the teacher of the course or an admin.
+
+    Checks permissions before the object is fetched, using the course ID from the URL.
     """
     def has_permission(self, request, view):
         # The user must be authenticated to proceed.
@@ -104,8 +101,8 @@ class IsCourseTeacherOrAdmin(BasePermission):
 
 class IsLessonTeacherOrAdmin(BasePermission):
     """
-    Allow modification if the user is the lesson's course teacher or an admin.
-    Read-only access is allowed for everyone.
+    Allow editing if the user is the teacher of the lesson's course or an admin.
+    Anyone can read lessons, but only teachers and admins can modify them.
     """
     def has_permission(self, request, view):
         # Require authentication for any write; reads will be further checked per-object/view.

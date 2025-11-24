@@ -4,33 +4,35 @@ from rest_framework.test import APITestCase
 from .models import Course
 from accounts.models import User
 
+# This test suite checks the Course API endpoints for correct behavior and permissions.
+# It creates users with different roles and verifies that only the right people can create, update, or delete courses.
 class CourseAPITests(APITestCase):
     """
-    My test suite for the Course API endpoints.
-    
-    I'll set up a few users with different roles to test the permission logic
-    for creating, updating, and deleting courses.
+    Test suite for the Course API endpoints.
+
+    Sets up users with different roles and a sample course to test permission logic for all main actions.
     """
     def setUp(self):
         """
-        Set up the necessary users and a course for testing.
-        
-        This method runs before each test, giving me a clean slate.
+        Set up users and a course for testing.
+
+        This method runs before each test, so every test starts with a clean database.
+        Creates two teachers, one student, and one admin, plus a sample course.
         """
-        # User setup
+        # Create users with different roles.
         self.teacher1 = User.objects.create_user(username='teacher1', password='password123', role='teacher', email='teacher1@example.com')
         self.teacher2 = User.objects.create_user(username='teacher2', password='password123', role='teacher', email='teacher2@example.com')
         self.student = User.objects.create_user(username='student', password='password123', role='student', email='student@example.com')
         self.admin = User.objects.create_user(username='admin', password='password123', role='admin', email='admin@example.com', is_staff=True, is_superuser=True)
 
-        # Course setup, owned by teacher1
+        # Create a course owned by teacher1.
         self.course = Course.objects.create(
             title="Introduction to Testing",
             description="A course about writing great tests.",
             teacher=self.teacher1
         )
 
-        # URL endpoints
+        # Set up URLs for list/create and detail endpoints.
         self.list_create_url = reverse('course-list-create')
         self.detail_url = reverse('course-detail', kwargs={'pk': self.course.pk})
 

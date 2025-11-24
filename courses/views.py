@@ -1,3 +1,4 @@
+
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Course
@@ -9,19 +10,18 @@ class CourseListCreateView(generics.ListCreateAPIView):
     """
     API view to list all courses or create a new one.
 
-    - GET: Returns a list of all existing courses. Open to any user.
-    - POST: Creates a new course. Restricted to users with the 'teacher' role.
+    - GET: Anyone can list all existing courses.
+    - POST: Only teachers and admins can create new courses.
     """
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
     def get_permissions(self):
         """
-        Instantiates and returns the list of permissions that this view requires.
-        
-        This method is overridden to apply different permissions for
-        different actions. 'GET' requests (listing courses) are open to anyone,
-        but 'POST' requests (creating a course) are restricted to teachers.
+        Set permissions for this view based on the request method.
+
+        - GET: Open to anyone.
+        - POST: Only authenticated teachers and admins can create courses.
         """
         if self.request.method == 'POST':
             # Allow teachers and admins to create courses.
@@ -29,20 +29,19 @@ class CourseListCreateView(generics.ListCreateAPIView):
         return []
 
     def perform_create(self, serializer):
-        """Assign teacher intelligently on course creation.
+        """
+        Assign the correct teacher when creating a course.
 
-        Rules:
         - If the user is a teacher: they become the course teacher (ignore any provided teacher field).
-        - If the user is an admin: they may optionally supply a "teacher" id for a valid teacher; otherwise
-          the admin themselves is NOT set as teacher (must provide teacher id) to avoid mixing roles.
+        - If the user is an admin: they must supply a valid teacher id; admin is not set as teacher.
         """
         user = self.request.user
-        # Teacher creating their own course.
+        # If a teacher is creating the course, assign them as the teacher.
         if getattr(user, 'role', None) == 'teacher':
             serializer.save(teacher=user)
             return
 
-        # Admin path: accept teacher id if valid.
+        # If an admin is creating the course, use the provided teacher id.
         if getattr(user, 'role', None) == 'admin':
             teacher_id = self.request.data.get('teacher')
             if teacher_id:
@@ -53,7 +52,7 @@ class CourseListCreateView(generics.ListCreateAPIView):
                     return
                 except User.DoesNotExist:
                     pass
-        # Fallback: no valid teacher supplied by admin.
+        # If no valid teacher is supplied by admin, raise an error.
         raise ValidationError({'teacher': 'Admin must supply a valid teacher id when creating a course.'})
 
 
@@ -61,20 +60,18 @@ class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     """
     API view to retrieve, update, or delete a single course.
 
-    - GET: Returns a single course. Open to any user.
-    - PUT/PATCH: Updates a course. Restricted to the teacher who owns it or an admin.
-    - DELETE: Deletes a course. Restricted to the teacher who owns it or an admin.
+    - GET: Anyone can view a course.
+    - PUT/PATCH/DELETE: Only the teacher who owns the course or an admin can modify or delete it.
     """
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
     def get_permissions(self):
         """
-        Instantiates and returns the list of permissions that this view requires.
-        
-        I'm setting this up so that 'GET' requests are open to anyone, but any
-        modifying actions ('PUT', 'PATCH', 'DELETE') are restricted to the
-        course owner or an admin.
+        Set permissions for this view based on the request method.
+
+        - GET: Open to anyone.
+        - PUT/PATCH/DELETE: Only authenticated course owners and admins can modify or delete.
         """
         if self.request.method in ['PUT', 'PATCH', 'DELETE']:
             return [IsAuthenticated(), IsOwnerOrAdmin()]
