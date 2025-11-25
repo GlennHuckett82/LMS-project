@@ -42,13 +42,13 @@ const Register: React.FC = () => {
 
   // Render the registration form UI
   return (
-    <div className="register-container">
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username</label>
-          {/* Controlled input for username */}
+    <div className="register-container auth-container">
+      <h2 className="auth-title">Register</h2>
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <div className="auth-field">
+          <label className="auth-label">Username</label>
           <input
+            className="auth-input"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -56,10 +56,10 @@ const Register: React.FC = () => {
           />
         </div>
 
-        <div>
-          <label>Email</label>
-          {/* Controlled input for email */}
+        <div className="auth-field">
+          <label className="auth-label">Email</label>
           <input
+            className="auth-input"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -67,10 +67,10 @@ const Register: React.FC = () => {
           />
         </div>
 
-        <div>
-          <label>Password</label>
-          {/* Controlled input for password */}
+        <div className="auth-field">
+          <label className="auth-label">Password</label>
           <input
+            className="auth-input"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -78,13 +78,11 @@ const Register: React.FC = () => {
           />
         </div>
 
-        <button type="submit">Register</button>
+        <button className="auth-button" type="submit">Register</button>
       </form>
 
-      {/* Show error message if registration fails */}
-      {error && <p className="error">{error}</p>}
-      {/* Show success message if registration succeeds */}
-      {success && <p className="success">{success}</p>}
+      {error && <p className="auth-error">{error}</p>}
+      {success && <p className="auth-success">{success}</p>}
     </div>
   );
 };

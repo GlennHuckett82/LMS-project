@@ -24,8 +24,8 @@ const Login: React.FC = () => {
       // loginUser stores tokens in localStorage if successful
       const data = await loginUser({ username, password });
       console.log("Logged in successfully:", data);
-      // Redirect to homepage after successful login
-      window.location.href = "/";
+      // Redirect to profile page after successful login
+      window.location.href = "/profile";
     } catch (err: any) {
       // Show error message if login fails
       setError(err.message || "Login failed");
@@ -34,13 +34,13 @@ const Login: React.FC = () => {
 
   // Render the login form UI
   return (
-    <div className="login-container">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username</label>
-          {/* Controlled input for username */}
+    <div className="login-container auth-container">
+      <h2 className="auth-title">Login</h2>
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <div className="auth-field">
+          <label className="auth-label">Username</label>
           <input
+            className="auth-input"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -48,10 +48,10 @@ const Login: React.FC = () => {
           />
         </div>
 
-        <div>
-          <label>Password</label>
-          {/* Controlled input for password */}
+        <div className="auth-field">
+          <label className="auth-label">Password</label>
           <input
+            className="auth-input"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -59,11 +59,10 @@ const Login: React.FC = () => {
           />
         </div>
 
-        <button type="submit">Login</button>
+        <button className="auth-button" type="submit">Login</button>
       </form>
 
-      {/* Show error message if login fails */}
-      {error && <p className="error">{error}</p>}
+      {error && <p className="auth-error">{error}</p>}
     </div>
   );
 };
