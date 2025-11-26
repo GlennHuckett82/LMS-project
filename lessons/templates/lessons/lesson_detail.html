@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="lesson-container" style="max-width: 900px; margin: 2rem auto; padding: 2rem; background: #f9fafb; border-radius: 8px; box-shadow: 0 2px 8px rgba(51, 78, 104, 0.1);">
+    <h1 style="color: #334e68; font-weight: 800; margin-bottom: 0.5rem;">
+        {{ lesson.title }}
+    </h1>
+    <p style="color: #486581; font-style: italic; margin-bottom: 1.5rem;">
+        Part of the course: {{ lesson.course.title }}
+    </p>
+    <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #d9e2ec;">
+
+    <!-- Lesson content (HTML from Django admin) -->
+    <div class="lesson-content" style="color: #334e68; line-height: 1.6; font-size: 1.1rem;">
+        {{ lesson.content|safe }}
+    </div>
+
+    <!-- Back to Profile -->
+    <div style="margin-top: 2rem; text-align: center;">
+        <a href="http://localhost:3000/profile"
+           style="color: #486581; text-decoration: underline; font-weight: 500;">
+            ← Back to Profile
+        </a>
+    </div>
+</div>
+
+<!-- Load external JS for drag-and-drop -->
+<script src="{% static 'js/lesson.js' %}"></script>
+{% endblock %}
