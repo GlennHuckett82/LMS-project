@@ -1,18 +1,17 @@
-
 // This component provides a login form for users to sign in to the LMS.
 // It handles user input, calls the login API, and manages error feedback.
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/auth";
 
-
 const Login: React.FC = () => {
+  const navigate = useNavigate();
   // State for the username input field
   const [username, setUsername] = useState("");
   // State for the password input field
   const [password, setPassword] = useState("");
   // State for any error messages (null means no error)
   const [error, setError] = useState<string | null>(null);
-
 
   // Handles form submission for login
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,11 +20,15 @@ const Login: React.FC = () => {
 
     try {
       // Call the login API with username and password
-      // loginUser stores tokens in localStorage if successful
       const data = await loginUser({ username, password });
       console.log("Logged in successfully:", data);
-      // Redirect to profile page after successful login
-      window.location.href = "/profile";
+
+      // Store tokens under the keys expected by api.ts
+      localStorage.setItem("accessToken", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
+
+      // Navigate to profile page after successful login using client-side routing
+      navigate("/profile");
     } catch (err: any) {
       // Show error message if login fails
       setError(err.message || "Login failed");
@@ -56,6 +59,7 @@ const Login: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            autoComplete="current-password"
           />
         </div>
 
@@ -66,7 +70,6 @@ const Login: React.FC = () => {
     </div>
   );
 };
-
 
 // Export the Login component so it can be used in routing and other pages.
 export default Login;
