@@ -1,143 +1,162 @@
-# LMS Backend
+# LMS Project
 
-A Django REST Framework (DRF) backend for a Learning Management System (LMS). This API supports user authentication, course management, lesson delivery, and student enrollments with role-based access control.
+Comprehensive full-stack Learning Management System (LMS) project containing a Django REST Framework backend (`lms_backend`) and a React + TypeScript frontend (`lms_frontend`). This README covers both sides, setup, debugging steps, API reference, recent fixes, and developer guidance.
+
+## Table of Contents
+- Overview
+- Repository layout
+- Quick status (recent changes)
+- Prerequisites
+- Backend: setup & run
+- Frontend: setup & run
+- Authentication & tokens
+- API reference (used by frontend)
+- Frontend details & important files
+- Debugging & troubleshooting
+- Change log
+- Testing
+- Deployment
+- Contributing
+- License
 
 ## Overview
+This project implements an LMS with role-based access (student, teacher, admin). Students can enroll and view lessons for courses they are enrolled in; teachers manage their own courses and lessons; admins have full access. The backend exposes a JSON API and the frontend consumes it using JWT authentication.
 
-The LMS allows users to register with roles (student, teacher, admin). Students can browse and enroll in courses, teachers can create and manage their courses and lessons, and admins have full access. The system uses JWT for authentication and includes pagination, throttling, and comprehensive permissions.
+## Repository layout
+- `lms_backend/` — Django backend (APIs, models, migrations, management commands)
+- `lms_frontend/` — React + TypeScript frontend
+- `README.md` — this file (project-level)
+- Other helper scripts: `populate_db.py`, `seed_lessons.py`, etc.
 
-### Key Features
-- **User Roles**: Student, Teacher, Admin with specific permissions.
-- **Courses**: CRUD operations with teacher ownership.
-- **Lessons**: Ordered lessons per course, accessible based on enrollment.
-- **Enrollments**: Students enroll in courses; teachers/admins view rosters.
-- **Authentication**: JWT token-based login.
-- **Security**: Role-based permissions, throttling (1000/day user, 200/day anon).
-- **Testing**: Full test suite for all endpoints.
+## Quick status (recent, important)
+- Backend: `lessons/urls.py` router updated so the LessonViewSet is reachable at `GET /api/lessons/` (router.register changed to `r""`).
+- Backend: `lessons/views.py` has temporary debug prints in `get_queryset()` to help trace why a user might see zero lessons.
+- Frontend: `src/services/api.ts` includes Axios interceptors to attach `accessToken` and refresh on 401, with logging.
+- Frontend: `src/pages/Profile.tsx` updated to be robust to different `/api/lessons/` response shapes (array, paginated object, or empty) and to group lessons by course.
 
-### Tech Stack
-- **Backend**: Django 5.2, Django REST Framework 3.16
-- **Database**: SQLite
-- **Authentication**: Simple JWT
-- **Testing**: Django's test framework
-- **Other**: Faker for data population
-
-## Setup Instructions
-
-### Prerequisites
+## Prerequisites
 - Python 3.8+
-- Git
+- Node.js (16+ recommended) and npm
+- Windows PowerShell examples are provided for local development
 
-### Installation
-1. Clone the repository:
-   ```
-   git clone https://github.com/GlennHuckett82/LMS-project.git
-   cd lms_backend
-   ```
+## Backend — Setup & Run (Windows PowerShell)
+1. Create and activate a virtual environment:
+```powershell
+cd c:\Users\gph19\lms_backend
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+2. Install dependencies:
+```powershell
+pip install -r requirements.txt
+```
+3. Apply migrations (and optional seed):
+```powershell
+python manage.py migrate
+python populate_db.py   # optional: populate sample data
+```
+4. Run the development server:
+```powershell
+python manage.py runserver
+```
+The API base is `http://127.0.0.1:8000/api/`.
 
-2. Create and activate a virtual environment:
-   ```
-   python -m venv .venv
-   .venv\Scripts\Activate.ps1  # On Windows PowerShell
-   ```
+## Frontend — Setup & Run (Windows PowerShell)
+1. Install and start the frontend dev server:
+```powershell
+cd c:\Users\gph19\lms_backend\lms_frontend
+npm install
+npm start
+```
+2. (Optional) Set API base URL with environment variable:
+```powershell
+$env:REACT_APP_API_BASE_URL="http://127.0.0.1:8000/api"
+npm start
+```
+Or create an `.env` file in `lms_frontend/` with:
+```
+REACT_APP_API_BASE_URL=http://127.0.0.1:8000/api
+```
 
-3. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+## Authentication & Tokens (frontend behavior)
+- Tokens stored in `localStorage`:
+  - `accessToken`: access token used in `Authorization` header
+  - `refreshToken`: used to obtain a new `accessToken` when needed
+- `src/services/api.ts`:
+  - Request interceptor attaches `Authorization: Bearer <accessToken>` when present.
+  - Response interceptor attempts to refresh the token on 401 and retry the original request.
+  - If refresh fails, tokens are cleared and user is redirected to `/login`.
 
-4. Apply migrations:
-   ```
-   python manage.py migrate
-   ```
+## API Reference (endpoints frontend uses)
+- Authentication: `POST /api/accounts/login/` (or token endpoints)
+- Tokens: `POST /api/token/`, `POST /api/token/refresh/`
+- Courses: `GET /api/courses/` (list), `GET /api/courses/{id}/` (detail)
+- Enrollments: `GET /api/enrollments/my-enrollments/`, `POST /api/enrollments/courses/{id}/enroll/`
+- Lessons: `GET /api/lessons/` (list), `GET /api/lessons/{id}/` (detail), `POST /api/lessons/progress/`
 
-5. (Optional) Populate with sample data:
-   ```
-   python populate_db.py
-   ```
+> Note: The frontend expects the LessonViewSet to be reachable at `/api/lessons/`. Ensure the backend router for lessons is registered at the empty prefix (see `lessons/urls.py`).
 
-6. Run the development server:
-   ```
-   python manage.py runserver
-   ```
-   The API will be available at `http://127.0.0.1:8000/`.
+## Frontend — Important files & recent changes
+- `src/services/api.ts`: Axios instance with request/response interceptors and console logs for token attachment and refresh attempts.
+- `src/auth/AuthContext.tsx`: Provides login/logout and the current user context.
+- `src/pages/Profile.tsx`: Fetches courses, enrollments, lessons. Recent improvements:
+  - Handles `res.data` whether it's an array, paginated (object with `results`) or empty.
+  - Logs `res.data`, `courseIds`, `lessonsArray`, and grouped lessons for easier debugging.
+  - Groups lessons by course id into `courseLessons` state.
+- `src/pages/LessonDetail.tsx`: Renders lesson content (server-rendered HTML endpoint for lesson detail exists as well).
 
-### Environment Variables
-- `SECRET_KEY`: Set in `lms_backend/settings.py` (change for production).
-- `DEBUG`: Set to `False` for production.
-- `ALLOWED_HOSTS`: Configure for deployment.
+## Debugging & Troubleshooting (step-by-step)
+If a student sees "No lessons available" while the DB lists lessons:
 
-## API Endpoints
+1. Confirm backend route mapping:
+   - `c:\Users\gph19\lms_backend\lessons\urls.py` should register the LessonViewSet with `router.register(r"", LessonViewSet, basename="lesson")` so that `/api/lessons/` is routed properly.
 
-Base URL: `http://127.0.0.1:8000/api/`
+2. Check Django server logs (terminal running `python manage.py runserver`):
+   - `lessons/views.py` includes debug prints in `get_queryset()` that show the username, role, and the number of lessons filtered for the user. Look for lines like:
+     - `DEBUG: User in LessonViewSet get_queryset: <username>, ID: <id>, Role: <role>`
+     - `DEBUG: Student queryset contains X lessons.`
 
-### Authentication
-- `POST /api/token/`: Obtain JWT token (username, password).
-- `POST /api/token/refresh/`: Refresh JWT token.
-- `POST /api/token/verify/`: Verify JWT token.
+3. Browser DevTools (Profile page tab):
+   - Network tab: locate `GET /api/lessons/` and inspect the Response tab. Is it an array? An object with `results`? Empty?
+   - Console tab: look for console logs produced by `Profile.tsx`: `res.data:`, `courseIds:`, `lessonsArray:`, `Grouped lessons by course:`.
 
-### Accounts
-- `POST /api/accounts/register/`: Register a new user (fields: username, email, password, role).
-- Requires authentication for some operations, but registration is open.
+4. Token verification:
+   - In DevTools > Application > Local Storage, confirm `accessToken` and `refreshToken` are present.
+   - Check console logs from `src/services/api.ts` for token presence and refresh attempts.
 
-### Courses
-- `GET /api/courses/`: List all courses (public).
-- `POST /api/courses/`: Create a course (teachers/admins only; teacher auto-assigned or specified by admin).
-- `GET /api/courses/{id}/`: Retrieve a course (public).
-- `PUT/PATCH /api/courses/{id}/`: Update a course (owner teacher or admin).
-- `DELETE /api/courses/{id}/`: Delete a course (owner teacher or admin).
+5. If backend returns no lessons but DB has lessons:
+   - Verify the user in request matches enrollments in DB.
+   - Verify `get_queryset()` filter `course__enrollments__student=user` matches your Enrollment model.
 
-### Lessons
-- `GET /api/lessons/`: List lessons (filtered by user role/enrollment).
-- `POST /api/lessons/`: Create a lesson (course teacher or admin).
-- `GET /api/lessons/{id}/`: Retrieve a lesson (enrolled students, teacher, admin).
-- `PUT/PATCH /api/lessons/{id}/`: Update a lesson (course teacher or admin).
-- `DELETE /api/lessons/{id}/`: Delete a lesson (course teacher or admin).
-
-### Enrollments
-- `POST /api/enrollments/course/{course_id}/enroll/`: Enroll in a course (students only).
-- `GET /api/enrollments/my-enrollments/`: List student's enrollments (authenticated user).
-- `GET /api/enrollments/course/{course_id}/roster/`: View course roster (course teacher or admin).
-
-### Permissions
-- **Anonymous**: Read courses/lessons.
-- **Students**: Enroll, view enrolled content.
-- **Teachers**: Manage own courses/lessons.
-- **Admins**: Full access.
+## Change Log (recent & relevant)
+- Backend:
+  - `lessons/urls.py`: router.register changed to `r""` so `/api/lessons/` routes to LessonViewSet.
+  - `lessons/views.py`: added debug prints in `get_queryset()` to aid troubleshooting.
+- Frontend:
+  - `src/services/api.ts`: added logging and robust token refresh handling.
+  - `src/pages/Profile.tsx`: handle different response shapes from `/api/lessons/` to avoid runtime errors and added grouping/logging.
 
 ## Testing
-
-Run the full test suite:
-```
+- Backend tests (Django):
+```powershell
+cd c:\Users\gph19\lms_backend
+.venv\Scripts\Activate.ps1
 python manage.py test
 ```
+- Frontend tests (if configured):
+```powershell
+cd c:\Users\gph19\lms_backend\lms_frontend
+npm test
+```
 
-Tests cover:
-- User registration and roles.
-- Course CRUD and permissions.
-- Lesson access and management.
-- Enrollment logic and rosters.
-
-All 33 tests should pass.
-
-## Deployment
-
-### Heroku/Netlify
-1. Set up a Heroku app or Netlify site.
-2. Configure environment variables (SECRET_KEY, DEBUG=False, ALLOWED_HOSTS).
-3. Use PostgreSQL for production (update DATABASES in settings.py).
-4. Deploy via Git push or build process.
-5. Run migrations on deployment.
-
-### Local Production
-- Use a WSGI server like Gunicorn.
-- Serve static files with WhiteNoise or a CDN.
-- Enable HTTPS.
+## Deployment (brief)
+- Use PostgreSQL in production; configure `DATABASES` in `settings.py`.
+- Set `DEBUG=False`, provide `SECRET_KEY` and `ALLOWED_HOSTS`.
+- Serve static files with WhiteNoise or a dedicated CDN.
 
 ## Contributing
-- Follow Django best practices.
-- Write tests for new features.
-- Use Git for version control with descriptive commits.
+- Use feature branches and open PRs with clear descriptions and tests.
+- Keep the frontend-backend contract stable — coordinate endpoint or payload shape changes across both sides.
 
 ## License
 This project is for educational purposes. No specific license applied.
