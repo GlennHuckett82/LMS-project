@@ -9,6 +9,7 @@ interface Lesson {
   title: string;
   content: string;
   is_completed: boolean;
+  quiz_id: number | null;
 }
 
 const LessonDetail: React.FC = () => {
@@ -77,10 +78,15 @@ const LessonDetail: React.FC = () => {
         {completionMessage && <p className="completion-message">{completionMessage}</p>}
       </div>
 
-      <div className="navigation-links">
-        <Link to="/profile" className="nav-link">
+      <div className="lesson-navigation">
+        <Link to="/profile" className="nav-button">
           &larr; Back to Profile
         </Link>
+        {lesson.quiz_id && (
+          <Link to={`/quiz/${lesson.id}`} className="nav-button quiz-button">
+            Take the Quiz &rarr;
+          </Link>
+        )}
       </div>
     </div>
   );

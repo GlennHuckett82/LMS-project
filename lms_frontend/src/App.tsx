@@ -11,7 +11,10 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Courses from "./pages/Courses";
 import LessonDetail from "./pages/LessonDetail";
+import QuizPage from "./pages/Quiz";
+import QuizResultPage from "./pages/QuizResult";
 import { AuthProvider } from "./auth/AuthContext";
+import MainLayout from "./auth/MainLayout";
 import RequireAuth from "./auth/RequireAuth";
 
 
@@ -23,16 +26,13 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-            {/* Homepage route */}
-            <Route path="/" element={<Home />} />
-
-            {/* Public authentication routes */}
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-
-            {/* Courses listing route */}
-            <Route path="/courses" element={<Courses />} />
-
+            {/* Public routes wrapped in MainLayout for consistent navigation */}
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/courses" element={<Courses />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Route>
 
             {/* Protected profile route */}
             <Route path="/profile" element={
@@ -45,6 +45,18 @@ function App() {
             <Route path="/lessons/:lessonId" element={
               <RequireAuth>
                 <LessonDetail />
+              </RequireAuth>
+            } />
+
+            {/* Protected quiz routes */}
+            <Route path="/quiz/:lessonId" element={
+              <RequireAuth>
+                <QuizPage />
+              </RequireAuth>
+            } />
+            <Route path="/quiz/result/:attemptId" element={
+              <RequireAuth>
+                <QuizResultPage />
               </RequireAuth>
             } />
           </Routes>

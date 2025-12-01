@@ -46,10 +46,11 @@ const Register: React.FC = () => {
       <h2 className="auth-title">Register</h2>
       <form className="auth-form" onSubmit={handleSubmit}>
         <div className="auth-field">
-          <label className="auth-label">Username</label>
+          <label className="auth-label" htmlFor="username">Username</label>
           <input
             className="auth-input"
             type="text"
+            id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -57,10 +58,11 @@ const Register: React.FC = () => {
         </div>
 
         <div className="auth-field">
-          <label className="auth-label">Email</label>
+          <label className="auth-label" htmlFor="email">Email</label>
           <input
             className="auth-input"
             type="email"
+            id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -68,10 +70,11 @@ const Register: React.FC = () => {
         </div>
 
         <div className="auth-field">
-          <label className="auth-label">Password</label>
+          <label className="auth-label" htmlFor="password">Password</label>
           <input
             className="auth-input"
             type="password"
+            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required

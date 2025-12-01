@@ -13,11 +13,12 @@ class LessonSerializer(serializers.ModelSerializer):
         queryset=Course.objects.all(), source='course', write_only=True
     )
     is_completed = serializers.SerializerMethodField()
+    quiz_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Lesson
         # These are the fields that will be included in the API responses and requests.
-        fields = ["id", "course", "course_id", "title", "content", "order", "is_completed"]
+        fields = ["id", "course", "course_id", "title", "content", "order", "is_completed", "quiz_id"]
 
     def get_is_completed(self, obj):
         request = self.context.get('request', None)
@@ -25,6 +26,11 @@ class LessonSerializer(serializers.ModelSerializer):
             student = request.user
             return LessonProgress.objects.filter(lesson=obj, student=student, is_completed=True).exists()
         return False
+
+    def get_quiz_id(self, obj):
+        if hasattr(obj, 'quiz') and obj.quiz:
+            return obj.quiz.id
+        return None
 
 # Serializer for tracking student progress on lessons.
 # This handles the data for marking a lesson as complete.

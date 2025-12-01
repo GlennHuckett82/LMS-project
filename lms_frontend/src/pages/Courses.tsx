@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "../App.css";
 
 const courses = [
@@ -42,10 +43,6 @@ const courses = [
 function Courses() {
   return (
     <div className="courses-page-wrapper">
-      <header className="courses-header courses-header--distinct">
-        <h1 className="courses-header__title">Available Courses</h1>
-        <p className="courses-header__tagline">This is where your journey begins. Find the perfect course to unlock your potential and start building the future you want.</p>
-      </header>
       <section className="featured-courses">
         <div className="featured-courses__grid">
           {courses.map((course, idx) => (
