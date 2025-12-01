@@ -1,20 +1,21 @@
 
 # Import necessary modules from Django REST Framework and local apps.
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, generics, status
 from rest_framework.exceptions import PermissionDenied
-from .models import Lesson
-from .serializers import LessonSerializer
-from accounts.permissions import IsLessonTeacherOrAdmin
+from rest_framework.response import Response
+from .models import Lesson, LessonProgress
+from .serializers import LessonSerializer, LessonProgressSerializer
+from accounts.permissions import IsLessonTeacherOrAdmin, IsStudent
 from django.db.models import Q
-
+from django.shortcuts import render, get_object_or_404
 
 # This viewset handles all CRUD operations for lessons.
 # It enforces permissions so only the right users can access or modify lessons.
+
 class LessonViewSet(viewsets.ModelViewSet):
-	# Use the LessonSerializer for input/output formatting
 	serializer_class = LessonSerializer
-	# Only authenticated users with the right role can access lesson endpoints
 	permission_classes = [permissions.IsAuthenticated, IsLessonTeacherOrAdmin]
+	pagination_class = None
 
 	def get_queryset(self):
 		"""
@@ -25,43 +26,82 @@ class LessonViewSet(viewsets.ModelViewSet):
 		- Anyone else gets nothing.
 		"""
 		user = self.request.user
+		print(f"DEBUG: User in LessonViewSet get_queryset: {user.username}, ID: {user.id}, Role: {getattr(user, 'role', 'N/A')}")
+
 		base = Lesson.objects.select_related("course", "course__teacher").order_by("order")
-		# If the user is an admin, show all lessons
 		if getattr(user, "role", None) == "admin":
+			print("DEBUG: User is admin, returning all lessons.")
 			return base
-		# If the user is a teacher, show only lessons for their courses
 		if getattr(user, "role", None) == "teacher":
+			print(f"DEBUG: User is teacher, filtering by courses for teacher {user.username}.")
 			return base.filter(course__teacher=user)
-		# If the user is a student, show lessons for courses they're enrolled in
 		if getattr(user, "role", None) == "student":
-			return base.filter(course__enrollments__student=user).distinct()
-		# If the user is anonymous or has no valid role, show nothing
+			print(f"DEBUG: User is student, filtering by enrolled courses for student {user.username}.")
+			queryset = base.filter(course__enrollments__student=user).distinct()
+			print(f"DEBUG: Student queryset contains {queryset.count()} lessons.")
+			for lesson_item in queryset:
+				print(f"  - Lesson ID: {lesson_item.id}, Title: {lesson_item.title}, Course: {lesson_item.course.title}")
+			return queryset
+		print("DEBUG: User has no recognized role, returning empty queryset.")
 		return base.none()
 
 	def perform_create(self, serializer):
-		"""
-		Handles creation of a new lesson.
-		Only admins or the teacher of the course can create lessons for that course.
-		"""
 		user = self.request.user
 		course = serializer.validated_data.get("course")
 		if not user.is_authenticated:
 			raise PermissionDenied("Authentication required.")
-		# Allow creation if user is admin or the teacher for the course
 		if getattr(user, "role", None) == "admin" or course.teacher == user:
 			serializer.save()
 		else:
 			raise PermissionDenied("Only the course teacher or admin can create lessons for this course.")
 
 	def perform_update(self, serializer):
-		"""
-		Handles updates to an existing lesson.
-		Only admins or the teacher of the course can modify lessons for that course.
-		"""
 		user = self.request.user
 		course = serializer.instance.course
-		# Allow update if user is admin or the teacher for the course
 		if getattr(user, "role", None) == "admin" or course.teacher == user:
 			serializer.save()
 		else:
 			raise PermissionDenied("Only the course teacher or admin can modify this lesson.")
+
+class LessonProgressView(generics.CreateAPIView):
+    """
+    API view for students to mark a lesson as complete.
+    """
+    serializer_class = LessonProgressSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStudent]
+
+    def create(self, request, *args, **kwargs):
+        lesson_id = request.data.get("lesson")
+        if not lesson_id:
+            return Response({"lesson": "This field is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        lesson = get_object_or_404(Lesson, id=lesson_id)
+
+        # Check if the student is enrolled in the course this lesson belongs to
+        if not request.user.enrollments.filter(course=lesson.course).exists():
+            return Response({"detail": "You are not enrolled in the course for this lesson."}, status=status.HTTP_403_FORBIDDEN)
+
+        progress, created = LessonProgress.objects.update_or_create(
+            student=request.user,
+            lesson=lesson,
+            defaults={'is_completed': True}
+        )
+        
+        serializer = self.get_serializer(progress)
+        headers = self.get_success_headers(serializer.data)
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return Response(serializer.data, status=status_code, headers=headers)
+
+
+def lesson_detail_view(request, course_id, lesson_id):
+	# Debug: Print lesson_id and course_id to verify correct values
+	print(f"Requested lesson_id: {lesson_id}, course_id: {course_id}")
+	lesson = get_object_or_404(Lesson, id=lesson_id, course__id=course_id)
+	# Debug: Print lesson title and content to verify correct lesson
+	print(f"Loaded lesson: {lesson.title}")
+	context = {
+		'lesson': lesson,
+		'lesson_title': lesson.title,
+		'lesson_content': lesson.content,
+	}
+	return render(request, 'lessons/lesson_detail.html', context)

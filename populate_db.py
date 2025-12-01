@@ -2,10 +2,10 @@
 import requests
 from faker import Faker
 
-# This script helps you quickly fill your database with test users for development.
-# It's not part of the main app—just a handy tool for local testing and demos.
+# This script helps to quickly fill your database with test users for development.
+# This is not part of the main app—just a handy tool for local testing and demos.
 
-# We use the Faker library to generate realistic names and emails, so you don't have to make them up yourself.
+# Here the Faker library will generate realistic names and emails, no need to make them up yourself.
 fake = Faker()
 
 # This is the API endpoint where new users get registered.
@@ -16,8 +16,8 @@ def create_user(role):
     """
     Create a single user with the given role (either 'teacher' or 'student').
 
-    This function makes up a name and email, then sends them to the API as if a real person was signing up.
-    It's a quick way to fill your database for testing features that need users.
+    Function makes up a name and email, then sends them to the API as if a real person was signing up.
+    Perfect way to fill your database for testing features that need users.
     """
     # Make up a realistic name and email for this user.
     first_name = fake.first_name()
@@ -34,7 +34,7 @@ def create_user(role):
         "role": role
     }
 
-    # Try to send the registration request. If the server isn't running, let the developer know.
+    # Send the registration request. If the server isn't running, let the developer know.
     try:
         response = requests.post(API_URL, json=data)
         # If the user was created, print a success message.
@@ -46,7 +46,7 @@ def create_user(role):
     except requests.exceptions.ConnectionError as e:
         print(f"Error connecting to the server: {e}")
         print("Is the Django development server running? Start it with 'python manage.py runserver'.")
-        return False # If we can't reach the server, stop the script so you can fix it.
+        return False # If unable to reach the server, stop the script so you can fix it.
     return True
 
 def main():
@@ -54,17 +54,17 @@ def main():
     """
     This is the entry point for the script. It creates teachers and students for testing.
 
-    Run this script whenever you need fresh test users in your local database.
+    Script can be run whenever fresh test users are needed in the local database.
     """
     print("--- Starting User Population Script ---")
 
-    # First, let's add 5 teachers to the database.
+    # First add 5 teachers to the database.
     print("\n--- Creating Teachers ---")
     for _ in range(5):
         if not create_user("teacher"):
-            break # If we hit a connection error, stop so you can fix the server.
+            break # If a connection error is hit, stop so you can fix the server.
 
-    # Now, let's add 20 students.
+    # Add 20 students.
     print("\n--- Creating Students ---")
     for _ in range(20):
         if not create_user("student"):

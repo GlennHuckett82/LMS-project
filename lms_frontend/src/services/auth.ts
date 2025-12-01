@@ -47,3 +47,18 @@ export async function loginUser(data: LoginData) {
 
   return response.data;
 }
+
+/**
+ * Mark a lesson as complete for the logged-in user.
+ * Sends an authenticated POST request to /api/lessons/progress/.
+ */
+export async function markLessonComplete(lessonId: number) {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    throw new Error("Authentication token not found.");
+  }
+
+  const response = await api.post("/lessons/progress/", { lesson: lessonId });
+
+  return response.data;
+}
