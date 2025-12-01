@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 // import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Courses from "./pages/Courses";
+import LessonDetail from "./pages/LessonDetail";
 import { AuthProvider } from "./auth/AuthContext";
 import RequireAuth from "./auth/RequireAuth";
 
@@ -40,7 +41,12 @@ function App() {
               </RequireAuth>
             } />
 
-            {/* Future: Add more protected routes for lessons, course management, etc. */}
+            {/* Protected lesson detail route */}
+            <Route path="/lessons/:lessonId" element={
+              <RequireAuth>
+                <LessonDetail />
+              </RequireAuth>
+            } />
           </Routes>
         </div>
       </Router>
