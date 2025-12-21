@@ -1,4 +1,3 @@
-
 /* Base styles for the app body: resets margin and sets system font stack for consistency */
 body {
   margin: 0;
@@ -14,4 +13,46 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Dashboard Header Styles */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Removed .button-home styles (no longer used) */
+
+/* Shared button styles consistent with site theme */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #334e68; /* primary */
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 8px rgba(51, 78, 104, 0.13);
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.02s ease;
+}
+.button:hover {
+  background: #486581;
+  box-shadow: 0 4px 16px rgba(51, 78, 104, 0.13);
+}
+.button:active {
+  transform: translateY(1px);
+}
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.button:focus {
+  outline: 2px solid #243b53;
+  outline-offset: 2px;
 }

@@ -1,3 +1,14 @@
+/* --- APP STYLES --- */
+
+.App {
+  text-align: center;
+}
+
+/* Shared heading style for dashboard titles */
+.heading-xl {
+  color: #334e68;
+  font-weight: 800;
+}
 /* --- AUTH PAGES (LOGIN & REGISTER) --- */
 .auth-container {
   max-width: 400px;

@@ -1,0 +1,10 @@
+.card--spaced {
+	margin-bottom: 16px;
+}
+
+.create-controls {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	flex-wrap: wrap;
+}
