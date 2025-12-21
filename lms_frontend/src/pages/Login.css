@@ -1,0 +1,69 @@
+.password-field {}
+
+.password-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.auth-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #486581;
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.04s ease;
+}
+
+.auth-toggle:focus-visible {
+  outline: 2px solid #243b53;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.auth-toggle:hover {
+  color: #243b53;
+  background-color: rgba(36, 59, 83, 0.08);
+  border-radius: 8px;
+}
+
+.auth-toggle:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+/* Ensure the icon doesn't overlap the input text */
+.password-input-wrap .auth-input {
+  box-sizing: border-box;
+  padding-right: 56px; /* space for larger icon button */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-toggle {
+    transition: none;
+  }
+}
+
+.auth-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

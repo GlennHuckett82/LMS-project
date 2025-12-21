@@ -2,6 +2,8 @@
 // This component provides a registration form for new users to sign up for the LMS.
 // It manages user input, calls the registration API, and displays feedback messages.
 import React, { useState } from "react";
+import PasswordField from "../components/PasswordField";
+import "./Login.css";
 import { registerUser } from "../services/auth";
 
 
@@ -69,17 +71,14 @@ const Register: React.FC = () => {
           />
         </div>
 
-        <div className="auth-field">
-          <label className="auth-label" htmlFor="password">Password</label>
-          <input
-            className="auth-input"
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+        <PasswordField
+          id="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="new-password"
+          label="Password"
+        />
 
         <button className="auth-button" type="submit">Register</button>
       </form>

@@ -33,6 +33,9 @@ This project implements an LMS with role-based access (student, teacher, admin).
 - Backend: `lessons/views.py` has temporary debug prints in `get_queryset()` to help trace why a user might see zero lessons.
 - Frontend: `src/services/api.ts` includes Axios interceptors to attach `accessToken` and refresh on 401, with logging.
 - Frontend: `src/pages/Profile.tsx` updated to be robust to different `/api/lessons/` response shapes (array, paginated object, or empty) and to group lessons by course.
+ - Frontend: Added Logout buttons to Teacher and Admin dashboards; removed Home button references.
+ - Frontend: Introduced shared `.button` styles in `src/index.css` to unify buttons across pages.
+ - Frontend: Password visibility toggle planned as an icon-based, accessible component (to be finalized next).
 
 ## Prerequisites
 - Python 3.8+
@@ -104,6 +107,9 @@ REACT_APP_API_BASE_URL=http://127.0.0.1:8000/api
   - Logs `res.data`, `courseIds`, `lessonsArray`, and grouped lessons for easier debugging.
   - Groups lessons by course id into `courseLessons` state.
 - `src/pages/LessonDetail.tsx`: Renders lesson content (server-rendered HTML endpoint for lesson detail exists as well).
+ - `src/index.css`: Shared `.button` class added for consistent theming and focus/hover states.
+ - `src/pages/TeacherDashboard.tsx` and `src/pages/AdminDashboard.tsx`: Logout button added in header; Home button removed.
+ - Planned: `src/components/PasswordField.tsx` with icon toggle (`Eye`/`EyeOff`) to provide accessible, type-safe show/hide password control.
 
 ## Debugging & Troubleshooting (step-by-step)
 If a student sees "No lessons available" while the DB lists lessons:
