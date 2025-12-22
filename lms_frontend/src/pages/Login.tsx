@@ -78,12 +78,16 @@ const Login: React.FC = () => {
     } catch (err: any) {
       // Show error message if login fails
       console.error("Login error:", err); // Log the full error to the console
-      if (axios.isAxiosError(err) && err.response) {
-        // If it's an API error, show the message from the backend
-        setError(err.response.data.detail || "Login failed. Please check your credentials.");
+      const response = (err as any)?.response;
+      if (response && response.data) {
+        // If the error includes a response (typical Axios error), show backend message
+        setError(
+          response.data.detail ||
+            "Login failed. Please check your credentials."
+        );
       } else {
         // For other errors (network, etc.)
-        setError(err.message || "An unexpected error occurred.");
+        setError(err?.message || "An unexpected error occurred.");
       }
     }
   };
