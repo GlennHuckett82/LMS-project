@@ -3,7 +3,8 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 interface AuthContextType {
   isAuthenticated: boolean;
   accessToken: string | null;
-  login: (token: string) => void;
+  // Login with new tokens; refresh is optional for flexibility
+  login: (accessToken: string, refreshToken?: string) => void;
   logout: () => void;
 }
 
@@ -30,9 +31,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  const login = (token: string) => {
-    localStorage.setItem("accessToken", token);
-    setAccessToken(token);
+  const login = (accessTokenValue: string, refreshTokenValue?: string) => {
+    // Persist tokens for interceptors
+    localStorage.setItem("accessToken", accessTokenValue);
+    if (refreshTokenValue) {
+      localStorage.setItem("refreshToken", refreshTokenValue);
+    }
+    setAccessToken(accessTokenValue);
     setIsAuthenticated(true);
   };
 

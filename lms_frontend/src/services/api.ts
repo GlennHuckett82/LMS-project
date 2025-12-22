@@ -12,16 +12,21 @@ const API_BASE =
 // Create an Axios instance with the base URL
 const api = axios.create({ baseURL: API_BASE });
 
+// Single-flight refresh guard: ensures only one refresh happens at a time
+let refreshInFlight: Promise<string> | null = null;
+
 
 // Request interceptor: attaches access token to every outgoing request if available
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("accessToken"); // match auth.ts storage key
-    if (token && config.url !== '/accounts/login/') {
+    const url = config.url || "";
+    const isLogin = url.endsWith("accounts/login/");
+    if (token && !isLogin) {
       config.headers = config.headers || {};
       (config.headers as any)["Authorization"] = `Bearer ${token}`;
     }
-    console.log('Request interceptor: token present?', !!token, 'URL:', config.url);
+    console.log('Request interceptor:', { tokenPresent: !!token, url, isLogin });
     return config;
   },
   (error) => Promise.reject(error)
@@ -36,35 +41,56 @@ api.interceptors.response.use(
 
     console.log('Response interceptor: error status', error.response?.status, 'URL:', originalRequest?.url);
 
-    // If access token is expired and we haven't retried yet
-    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/accounts/login/') {
+    // If access token is expired and we haven't retried yet (not for login URL)
+    const originalUrl = originalRequest?.url || "";
+    const isLogin = originalUrl.endsWith("accounts/login/");
+    if (error.response?.status === 401 && !originalRequest._retry && !isLogin) {
       originalRequest._retry = true;
       const refreshToken = localStorage.getItem("refreshToken");
 
       console.log('Attempting refresh, refreshToken present?', !!refreshToken);
 
       if (refreshToken) {
+        // Ensure only one refresh request runs at a time
+        if (!refreshInFlight) {
+          const refreshTokenUsed = refreshToken; // snapshot to detect session changes
+          refreshInFlight = axios
+            .post(`${API_BASE}/token/refresh/`, { refresh: refreshTokenUsed })
+            .then((res) => {
+              const newAccessToken = res.data.access as string;
+              localStorage.setItem("accessToken", newAccessToken);
+              console.log('Refresh successful, new token set');
+              return newAccessToken;
+            })
+            .catch((refreshError) => {
+              console.log('Refresh failed:', axios.isAxiosError(refreshError) ? refreshError.response?.status : refreshError);
+              // Only clear tokens if the current session still matches the token we attempted
+              const currentRefresh = localStorage.getItem("refreshToken");
+              if (currentRefresh === refreshTokenUsed) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                // Avoid redirect loops during login; only redirect if not already on login
+                if (window.location.pathname !== "/login") {
+                  window.location.href = "/login";
+                }
+              }
+              throw refreshError;
+            })
+            .finally(() => {
+              // Allow future refresh attempts
+              refreshInFlight = null;
+            });
+        }
+
         try {
-          // Attempt to refresh the access token using the refresh token
-          const refreshResponse = await axios.post(
-            `${API_BASE}/accounts/login/refresh/`,
-            { refresh: refreshToken }
-          );
-
-          const newAccessToken = refreshResponse.data.access;
-          localStorage.setItem("accessToken", newAccessToken);
-
-          console.log('Refresh successful, new token set');
-
+          const newAccessToken = await refreshInFlight;
           // Retry the original request with the new access token
-          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          originalRequest.headers = originalRequest.headers || {};
+          (originalRequest.headers as any)["Authorization"] = `Bearer ${newAccessToken}`;
           return api(originalRequest);
-        } catch (refreshError) {
-          console.log('Refresh failed:', axios.isAxiosError(refreshError) ? refreshError.response?.status : refreshError);
-          // If refresh fails, clear tokens and redirect to login page
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-          window.location.href = "/login";
+        } catch {
+          // Already handled above (tokens cleared + redirect); propagate error
+          return Promise.reject(error);
         }
       }
     }
