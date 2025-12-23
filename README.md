@@ -15,11 +15,16 @@ Comprehensive full-stack Learning Management System (LMS) project containing a D
 - Debugging & troubleshooting
 - Change log
 - Testing
-- Deployment
-- Contributing
-- License
-
-## Overview
+## Validation
+- HTML (frontend): `lms_frontend/build/index.html` validated with the W3C Nu HTML checker (https://validator.w3.org/nu/, no errors).
+- HTML (backend lesson page): rendered lesson detail page (`/courses/12/lessons/5/`) view source validated with the W3C Nu HTML checker (https://validator.w3.org/nu/, no errors or warnings).
+- CSS: `lms_frontend/src/index.css` validated with the W3C CSS Validator (https://jigsaw.w3.org/css-validator/, CSS Level 3 + SVG, no errors).
+- Python: `python manage.py test` passes (42 tests) on the Django backend.
+- TypeScript: from `lms_frontend/`, TypeScript check run with:
+  ```powershell
+  cd c:\Users\gph19\lms_backend\lms_frontend
+  npx tsc --noEmit
+  ```
 This project implements an LMS with role-based access (student, teacher, admin). Students can enroll and view lessons for courses they are enrolled in; teachers manage their own courses and lessons; admins have full access. The backend exposes a JSON API and the frontend consumes it using JWT authentication.
 
 ## Repository layout
@@ -154,6 +159,13 @@ python manage.py test
 cd c:\Users\gph19\lms_backend\lms_frontend
 npm test
 ```
+
+## Validation
+- HTML (frontend): `lms_frontend/build/index.html` validated with the W3C Nu HTML checker (no errors).
+- HTML (backend lesson page): rendered lesson detail page (`/courses/12/lessons/5/`) view source validated with the W3C Nu HTML checker (no errors or warnings).
+- CSS: `lms_frontend/src/index.css` validated with the W3C CSS Validator (CSS Level 3 + SVG, no errors).
+- Python: `python manage.py test` passes (42 tests) on the Django backend.
+- TypeScript: `npx tsc --noEmit` runs cleanly in `lms_frontend` (no type errors).
 
 ## Deployment (brief)
 - Use PostgreSQL in production; configure `DATABASES` in `settings.py`.
