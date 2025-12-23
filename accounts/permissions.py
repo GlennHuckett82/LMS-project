@@ -17,9 +17,11 @@ class IsAdmin(BasePermission):
     Checks authentication and the user's role.
     """
     def has_permission(self, request, view):
-        # The user must be authenticated to have a role.
-        # Then we check if their role is 'admin'.
-        return request.user and request.user.is_authenticated and request.user.role == 'admin'
+        user = request.user
+        if not user or not user.is_authenticated:
+            return False
+        role = getattr(user, "role", None)
+        return bool(role == "admin" or user.is_staff or user.is_superuser)
 
 class IsTeacher(BasePermission):
     """
