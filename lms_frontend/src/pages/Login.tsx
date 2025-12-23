@@ -7,6 +7,7 @@ import { loginUser, fetchMe } from "../services/auth";
 import PasswordField from "../components/PasswordField";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import { useAuth } from "../auth/AuthContext";
  
 
 interface DecodedToken {
@@ -20,6 +21,7 @@ interface DecodedToken {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   // State for the username input field
   const [username, setUsername] = useState("");
   // State for the password input field
@@ -37,9 +39,8 @@ const Login: React.FC = () => {
       const data = await loginUser({ username, password });
       console.log("Logged in successfully:", data);
 
-      // Store tokens under the keys expected by api.ts
-      localStorage.setItem("accessToken", data.access);
-      localStorage.setItem("refreshToken", data.refresh);
+      // Update global auth state and persist tokens
+      login(data.access, data.refresh);
 
       // Prefer server-authoritative role via /accounts/me/ to avoid claim mismatches
       let userRole: string | null = null;
@@ -77,12 +78,16 @@ const Login: React.FC = () => {
     } catch (err: any) {
       // Show error message if login fails
       console.error("Login error:", err); // Log the full error to the console
-      if (axios.isAxiosError(err) && err.response) {
-        // If it's an API error, show the message from the backend
-        setError(err.response.data.detail || "Login failed. Please check your credentials.");
+      const response = (err as any)?.response;
+      if (response && response.data) {
+        // If the error includes a response (typical Axios error), show backend message
+        setError(
+          response.data.detail ||
+            "Login failed. Please check your credentials."
+        );
       } else {
         // For other errors (network, etc.)
-        setError(err.message || "An unexpected error occurred.");
+        setError(err?.message || "An unexpected error occurred.");
       }
     }
   };

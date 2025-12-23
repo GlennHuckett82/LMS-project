@@ -16,7 +16,7 @@ interface RegisterData {
  * Expected response: { id, username, email }
  */
 export async function registerUser(data: RegisterData) {
-  const response = await api.post("/accounts/register/", data);
+  const response = await api.post("accounts/register/", data);
   return response.data;
 }
 
@@ -39,13 +39,23 @@ interface LoginData {
  * }
  */
 export async function loginUser(data: LoginData) {
-  const response = await api.post("/accounts/login/", data);
-
-  // Store tokens for later use
-  localStorage.setItem("accessToken", response.data.access);
-  localStorage.setItem("refreshToken", response.data.refresh);
-
+  const response = await api.post("accounts/login/", data);
   return response.data;
+}
+
+/**
+ * Fetch current authenticated user info (including role).
+ */
+export async function fetchMe() {
+  const response = await api.get("accounts/me/");
+  return response.data as {
+    id: number;
+    username: string;
+    email?: string;
+    role?: string;
+    is_staff?: boolean;
+    is_superuser?: boolean;
+  };
 }
 
 /**
@@ -58,7 +68,7 @@ export async function markLessonComplete(lessonId: number) {
     throw new Error("Authentication token not found.");
   }
 
-  const response = await api.post("/lessons/progress/", { lesson: lessonId });
+  const response = await api.post("lessons/progress/", { lesson: lessonId });
 
   return response.data;
 }

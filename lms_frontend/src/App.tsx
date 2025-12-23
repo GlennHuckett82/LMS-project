@@ -13,6 +13,8 @@ import Courses from "./pages/Courses";
 import LessonDetail from "./pages/LessonDetail";
 import QuizPage from "./pages/Quiz";
 import QuizResultPage from "./pages/QuizResult";
+import TeacherDashboard from "./pages/TeacherDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import { AuthProvider } from "./auth/AuthContext";
 import MainLayout from "./auth/MainLayout";
 import RequireAuth from "./auth/RequireAuth";
@@ -38,6 +40,18 @@ function App() {
             <Route path="/profile" element={
               <RequireAuth>
                 <Profile />
+              </RequireAuth>
+            } />
+
+            {/* Protected teacher and admin dashboards */}
+            <Route path="/teacher-dashboard" element={
+              <RequireAuth>
+                <TeacherDashboard />
+              </RequireAuth>
+            } />
+            <Route path="/admin-dashboard" element={
+              <RequireAuth>
+                <AdminDashboard />
               </RequireAuth>
             } />
 

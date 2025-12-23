@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Course
 from .serializers import CourseSerializer
-from accounts.permissions import IsTeacherOrAdmin, IsOwnerOrAdmin
+from accounts.permissions import IsTeacherOrAdmin, IsOwnerOrAdmin, IsTeacher
 from rest_framework.exceptions import ValidationError
 
 class CourseListCreateView(generics.ListCreateAPIView):
@@ -76,4 +76,21 @@ class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ['PUT', 'PATCH', 'DELETE']:
             return [IsAuthenticated(), IsOwnerOrAdmin()]
         return []
+
+
+class MyCoursesListView(generics.ListAPIView):
+    """
+    List courses owned by the currently authenticated teacher.
+
+    - GET: Only authenticated teachers can view their own courses.
+    """
+    serializer_class = CourseSerializer
+
+    def get_permissions(self):
+        # Must be authenticated and have teacher role
+        return [IsAuthenticated(), IsTeacher()]
+
+    def get_queryset(self):
+        # Filter by current user as the course teacher
+        return Course.objects.filter(teacher=self.request.user).order_by('-id')
 

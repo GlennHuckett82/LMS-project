@@ -30,8 +30,7 @@ urlpatterns = [
     path('api/lessons/', include('lessons.urls')),
     path('api/quizzes/', include('quizzes.urls')),
 
-    # JWT authentication endpoints
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # JWT authentication endpoints (Login is handled under accounts/urls.py)
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]

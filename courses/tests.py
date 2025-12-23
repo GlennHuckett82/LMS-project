@@ -168,3 +168,32 @@ class CourseAPITests(APITestCase):
         response = self.client.delete(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Course.objects.count(), 0)
+
+    def test_my_courses_lists_only_own_courses_for_teacher(self):
+        """Authenticated teacher should see only their own courses at /api/courses/my/."""
+        # Give teacher2 their own course so both have at least one
+        Course.objects.create(title="T2 Course", description="Owned by teacher2", teacher=self.teacher2)
+        self.client.force_authenticate(user=self.teacher1)
+        url = reverse('my-courses')
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        # Response may be paginated or simple list; handle both
+        payload = resp.data
+        items = payload.get('results', payload)
+        titles = {c['title'] for c in items}
+        self.assertIn(self.course.title, titles)
+        self.assertNotIn("T2 Course", titles)
+
+    def test_student_cannot_access_my_courses(self):
+        """Students should receive 403 Forbidden for /api/courses/my/."""
+        self.client.force_authenticate(user=self.student)
+        url = reverse('my-courses')
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_admin_cannot_access_my_courses(self):
+        """Admins are not treated as teachers for /api/courses/my/."""
+        self.client.force_authenticate(user=self.admin)
+        url = reverse('my-courses')
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
