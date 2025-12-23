@@ -136,8 +136,7 @@ const handleEnroll = async (courseId: number) => {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
         <h2 style={{ color: "#334e68", fontWeight: 800 }}>My Profile</h2>
         <button
-          className="auth-button"
-          style={{ width: 'auto', padding: '8px 24px', fontSize: '1rem' }}
+          className="button"
           onClick={() => { logout(); window.location.href = "/"; }}
         >
           Logout
@@ -157,10 +156,9 @@ const handleEnroll = async (courseId: number) => {
                 <div className="course-card" key={course.id}>
                   <h3>{course.title}</h3>
                   <p>{course.description}</p>
-                  <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+                  <div className="course-card-actions">
                     <button
-                      className="auth-button"
-                      style={{ width: 'auto', padding: '8px 24px', fontSize: '1rem' }}
+                      className="button"
                       onClick={() => setOpenDropdown(openDropdown === course.id ? null : course.id)}
                       disabled={!isEnrolled}
                     >
@@ -168,8 +166,8 @@ const handleEnroll = async (courseId: number) => {
                     </button>
                     {!isEnrolled && (
                       <button
-                        className="auth-button"
-                        style={{ width: 'auto', padding: '8px 24px', fontSize: '1rem', background: '#2563eb', color: '#fff' }}
+                        className="button"
+                        style={{ background: '#2563eb', color: '#fff' }}
                         onClick={() => handleEnroll(course.id)}
                         disabled={enrolling === course.id}
                       >

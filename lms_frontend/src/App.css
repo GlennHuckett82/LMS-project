@@ -101,6 +101,27 @@
   width: 100%;
   text-align: center;
 }
+
+@media (max-width: 600px) {
+  .auth-container {
+    margin: 2.5rem 1.25rem;
+    padding: 2rem 1.5rem 1.75rem 1.5rem;
+  }
+
+  .auth-title {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-form {
+    gap: 1.25rem;
+  }
+
+  .auth-button {
+    font-size: 1rem;
+    padding: 12px 0;
+  }
+}
 /* Final Invitation Section Styling */
 .final-invitation {
   background: linear-gradient(90deg, #334e68 0%, #243b53 100%);
@@ -395,6 +416,14 @@
   margin-bottom: 0;
 }
 
+/* Ensure course action buttons align consistently across cards */
+.course-card-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto; /* push action row towards the bottom of the card */
+  margin-bottom: 1rem;
+}
+
 .lesson-detail-container {
   max-width: 800px;
   margin: 2rem auto;
@@ -409,6 +438,42 @@
   font-weight: 700;
   color: #334e68;
   margin-bottom: 1.5rem;
+}
+
+/* --- DASHBOARD TABLES --- */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(51, 78, 104, 0.08);
+  overflow: hidden;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e7ff;
+}
+
+.table th {
+  background: #f3f6fa;
+  font-weight: 700;
+  color: #334e68;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 700px) {
+  .table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 }
 
 .lesson-content {
@@ -1036,6 +1101,24 @@ body, html, #root {
 .dashboard-container {
   padding: 40px;
   text-align: center;
+}
+
+@media (max-width: 700px) {
+  .dashboard-container {
+    padding: 24px 16px;
+    text-align: left;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .dashboard-header .button {
+    align-self: stretch;
+    justify-content: center;
+  }
 }
 
 /* Course grid */

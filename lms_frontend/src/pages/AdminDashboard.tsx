@@ -46,9 +46,9 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="admin-dashboard">
+    <div className="dashboard-container admin-dashboard">
       <div className="dashboard-header">
-        <h2>Admin Dashboard</h2>
+        <h2 className="heading-xl">Admin Dashboard</h2>
         <button className="button" onClick={() => { logout(); navigate('/'); }}>Logout</button>
       </div>
       <p>Welcome, admin! Manage users and courses.</p>
@@ -106,7 +106,10 @@ const AdminDashboard: React.FC = () => {
                   />
                 </td>
                 <td>
-                  <button onClick={() => updateUser(u, { role: 'student', is_staff: false, is_superuser: false })}>
+                  <button
+                    className="button"
+                    onClick={() => updateUser(u, { role: 'student', is_staff: false, is_superuser: false })}
+                  >
                     Demote to student
                   </button>
                 </td>

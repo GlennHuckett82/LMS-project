@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import axios from 'axios';
 import './Quiz.css';
+import api from '../services/api';
 
 // Define TypeScript interfaces for our data structures
 interface Choice {
@@ -34,11 +34,7 @@ const QuizPage = () => {
     useEffect(() => {
         const fetchQuiz = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/quizzes/${lessonId}/`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
+                const response = await api.get(`/quizzes/${lessonId}/`);
                 setQuiz(response.data);
             } catch (err) {
                 setError('Failed to load the quiz. Please try again later.');
@@ -74,11 +70,7 @@ const QuizPage = () => {
         };
 
         try {
-            const response = await axios.post('http://localhost:8000/api/quizzes/attempt/', submissionData, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
+            const response = await api.post('/quizzes/attempt/', submissionData);
             // The backend will create the attempt and return the new attempt's ID.
             // We need to implement the result page to redirect to.
             // For now, let's assume the attempt object is returned directly

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
-import axios from 'axios';
+import api from '../services/api';
 import './Quiz.css'; // Reusing the same CSS file
 
 // Define TypeScript interfaces for the result data
@@ -36,16 +35,11 @@ const QuizResultPage = () => {
     const [result, setResult] = useState<QuizResultData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { accessToken } = useAuth();
 
     useEffect(() => {
         const fetchResult = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/quizzes/result/${attemptId}/`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
+                const response = await api.get(`/quizzes/result/${attemptId}/`);
                 setResult(response.data);
             } catch (err) {
                 setError('Failed to load quiz results.');
@@ -56,7 +50,7 @@ const QuizResultPage = () => {
         };
 
         fetchResult();
-    }, [attemptId, accessToken]);
+    }, [attemptId]);
 
     if (isLoading) return <div>Loading Results...</div>;
     if (error) return <div className="error-message">{error}</div>;
