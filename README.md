@@ -10,11 +10,13 @@ Comprehensive full-stack Learning Management System (LMS) project containing a D
 - Backend: setup & run
 - Frontend: setup & run
 - Authentication & tokens
+- Architecture & Auth Flow
 - API reference (used by frontend)
 - Frontend details & important files
 - Debugging & troubleshooting
 - Change log
 - Testing
+- Design & UX (screenshots & wireframes)
 ## Validation
 - HTML (frontend): `lms_frontend/build/index.html` validated with the W3C Nu HTML checker (https://validator.w3.org/nu/, no errors).
 - HTML (backend lesson page): rendered lesson detail page (`/courses/12/lessons/5/`) view source validated with the W3C Nu HTML checker (https://validator.w3.org/nu/, no errors or warnings).
@@ -95,6 +97,19 @@ REACT_APP_API_BASE_URL=http://127.0.0.1:8000/api
   - Response interceptor attempts to refresh the token on 401 and retry the original request.
   - If refresh fails, tokens are cleared and user is redirected to `/login`.
 
+## Architecture & Auth Flow
+- Backend apps:
+  - `accounts`: custom `User` with `role` (`student`, `teacher`, `admin`); login endpoint `/api/accounts/login/`; `/api/accounts/me/`; admin-only user management `/api/accounts/users/`.
+  - `courses`: course catalog and ownership; teacher-specific `/api/courses/my/` plus public list/detail.
+  - `lessons`: lesson content and progress tracking; list/detail at `/api/lessons/`; progress at `/api/lessons/progress/`.
+  - `enrollments`: enroll and list a user’s courses; `/api/enrollments/my-enrollments/`, `/api/enrollments/courses/{id}/enroll/`.
+  - `quizzes`: lesson quizzes and results.
+- Auth flow (frontend):
+  - Login stores `accessToken` and `refreshToken` in `localStorage`.
+  - `src/services/api.ts` attaches the access token on every request; on 401 it refreshes and retries once, otherwise logs out.
+  - Protected routes in React gate dashboards/pages by role.
+  - Backend DRF permissions enforce role checks on every endpoint.
+
 ## API Reference (endpoints frontend uses)
 - Authentication: `POST /api/accounts/login/` (or token endpoints)
 - Tokens: `POST /api/token/`, `POST /api/token/refresh/`
@@ -146,6 +161,29 @@ If a student sees "No lessons available" while the DB lists lessons:
 - Frontend:
   - `src/services/api.ts`: added logging and robust token refresh handling.
   - `src/pages/Profile.tsx`: handle different response shapes from `/api/lessons/` to avoid runtime errors and added grouping/logging.
+- Validation runs (latest):
+  - Backend: `python manage.py test` (42 tests) — last run: pass.
+  - Frontend: `npx tsc --noEmit` — last run: pass.
+
+## Planned enhancement: richer Courses page
+- Keep the Courses page but add value beyond the homepage cards by making each course tile expandable (accordion) or opening a modal instead of redirecting.
+- Extra detail to show per course: brief syllabus/learning outcomes, lesson count with completion summary, quiz availability, and a short note on the coding focus/stack for that course.
+- Implementation sketch:
+  - Frontend: on tile click, fetch (or reveal pre-fetched) course detail/lessons; use a modal or inline expansion with keyboard-focus trap; reuse existing `/api/courses/{id}/` and `/api/lessons/` data.
+  - Content: author a concise “What you’ll build/learn” blurb per course and surface lesson list with status chips.
+  - Rationale: differentiates Courses page from homepage by giving enrollment decisions more context without navigating away.
+
+## Design & UX (screenshots & wireframes)
+- Screenshots (stored in `screenshots/`):
+  - ![Profile Desktop](screenshots/profile-desktop.png)
+  - ![Profile Mobile](screenshots/profile-mobile.png)
+  - ![Teacher Dashboard Desktop](screenshots/teacher-dashboard-desktop.png)
+  - ![Teacher Dashboard Mobile](screenshots/teacher-dashboard-mobile.png)
+  - ![Admin Dashboard Desktop](screenshots/admin-dashboard-desktop.png)
+  - ![Admin Dashboard Mobile](screenshots/admin-dashboard-mobile.png)
+- Palette & components: cool blues/greys for primary UI (`#334e68`, `#486581`), green success (`#4fbb6b`), pink/red errors (`#e11d48`); system UI font stack; shared `.button` styles; cards and responsive tables.
+- Wireframes: (add Figma/Miro link here once ready).
+- **Planned UX additions (accordion/modal Courses page)**: see [docs/courses-page-enhancement.md](docs/courses-page-enhancement.md) for the detailed plan and code sketch.
 
 ## Testing
 - Backend tests (Django):
@@ -165,12 +203,16 @@ npm test
 - HTML (backend lesson page): rendered lesson detail page (`/courses/12/lessons/5/`) view source validated with the W3C Nu HTML checker (no errors or warnings).
 - CSS: `lms_frontend/src/index.css` validated with the W3C CSS Validator (CSS Level 3 + SVG, no errors).
 - Python: `python manage.py test` passes (42 tests) on the Django backend.
-- TypeScript: `npx tsc --noEmit` runs cleanly in `lms_frontend` (no type errors).
-
-## Deployment (brief)
-- Use PostgreSQL in production; configure `DATABASES` in `settings.py`.
-- Set `DEBUG=False`, provide `SECRET_KEY` and `ALLOWED_HOSTS`.
-- Serve static files with WhiteNoise or a dedicated CDN.
+## Deployment (when ready)
+- Backend (Django):
+  - Switch to PostgreSQL; set `DATABASES` in `settings.py` via environment variables.
+  - Set `DEBUG=False`, `SECRET_KEY`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`.
+  - Collect static: `python manage.py collectstatic` (use WhiteNoise or CDN); run with gunicorn/uvicorn via a process manager on your host (Render/Heroku/Dokku/etc.).
+  - Configure HTTPS and security headers on the platform.
+- Frontend (React):
+  - Build: `npm run build`.
+  - Deploy the `build/` output to Netlify/Vercel/Static hosting; set `REACT_APP_API_BASE_URL` to point at your deployed API.
+- Add your live URLs here after deployment.
 
 ## Contributing
 - Use feature branches and open PRs with clear descriptions and tests.
