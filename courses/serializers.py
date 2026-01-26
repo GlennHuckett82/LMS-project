@@ -1,3 +1,5 @@
+"""Serializers that expose courses and nested teacher details to the API."""
+
 from rest_framework import serializers
 from .models import Course
 from accounts.serializers import UserSerializer

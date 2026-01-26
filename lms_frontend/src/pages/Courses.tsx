@@ -1,5 +1,5 @@
+// Marketing-style courses catalog page showing featured tracks with tags.
 import React from "react";
-import { Link } from "react-router-dom";
 import "../App.css";
 
 const courses = [

@@ -1,3 +1,4 @@
+"""Lesson endpoints and views for CRUD plus progress tracking."""
 
 # Import necessary modules from Django REST Framework and local apps.
 from rest_framework import viewsets, permissions, generics, status
@@ -50,6 +51,7 @@ class LessonViewSet(viewsets.ModelViewSet):
 		course = serializer.validated_data.get("course")
 		if not user.is_authenticated:
 			raise PermissionDenied("Authentication required.")
+		# Only course owners or admins can add lessons; enforce here even though permissions are set on the viewset.
 		if getattr(user, "role", None) == "admin" or course.teacher == user:
 			serializer.save()
 		else:

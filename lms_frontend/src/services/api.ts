@@ -1,22 +1,23 @@
 
-// Centralized Axios instance for all API requests in the LMS frontend.
-// Handles authentication tokens and automatic refresh on expiration.
-import axios, { InternalAxiosRequestConfig, AxiosError } from "axios";
+// Centralized Axios client for every call the frontend makes to the backend.
+// Goal: keep auth handling in one place so pages stay simple and beginners can see
+// where tokens are attached and refreshed.
+import axios, { InternalAxiosRequestConfig } from "axios";
 
 
-// Base URL for API requests. Uses environment variable if set, otherwise defaults to local backend.
+// Base URL for API requests. Prefer env var so builds can point to prod/stage; fall back to local dev.
 const API_BASE =
   process.env.REACT_APP_API_BASE_URL || "http://127.0.0.1:8000/api";
 
 
-// Create an Axios instance with the base URL
+// Create an Axios instance with the base URL so every request inherits it.
 const api = axios.create({ baseURL: API_BASE });
 
-// Single-flight refresh guard: ensures only one refresh happens at a time
+// Single-flight refresh guard: if many calls 401 at once, only refresh one time.
 let refreshInFlight: Promise<string> | null = null;
 
 
-// Request interceptor: attaches access token to every outgoing request if available
+// Request interceptor: before any call goes out, attach the access token (except for login).
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("accessToken"); // match auth.ts storage key
@@ -33,7 +34,7 @@ api.interceptors.request.use(
 );
 
 
-// Response interceptor: automatically refreshes access token if expired (401)
+// Response interceptor: if the server says 401 (expired), try one refresh, then retry the call.
 api.interceptors.response.use(
   (response) => response,
   async (error) => {

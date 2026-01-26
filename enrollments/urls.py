@@ -1,3 +1,5 @@
+"""URL routes for enrollment actions: my enrollments, enroll, and roster."""
+
 from django.urls import path
 from .views import (
     StudentEnrollmentListView,

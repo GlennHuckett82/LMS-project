@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scope – Dashboard (Student / Teacher / Admin)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .dash-layout {
+      display: flex;
+      min-height: calc(100vh - 72px);
+    }
+    .dash-sidebar {
+      width: 260px;
+      border-right: 1px solid #e5e7eb;
+      padding: 24px 20px;
+      background-color: #f9fafb;
+    }
+    .dash-sidebar-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .dash-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .dash-nav-item {
+      padding: 6px 8px;
+      border-radius: 6px;
+      color: #4b5563;
+    }
+    .dash-nav-item.active {
+      background-color: #e0edff;
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+    .dash-main {
+      flex: 1;
+      padding: 24px 32px;
+    }
+    .dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .dash-title {
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .dash-role-notes {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .dash-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+    .dash-course-card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      padding: 14px 16px;
+    }
+    .dash-course-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .dash-course-meta {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+    .dash-course-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .btn-ghost {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      background-color: #ffffff;
+      font-size: 13px;
+      color: #374151;
+    }
+    .dash-annotation {
+      margin-top: 24px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px dashed #9ca3af;
+      background-color: #f9fafb;
+      font-size: 13px;
+      color: #4b5563;
+    }
+    .dash-annotation-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="navbar">
+      <div class="navbar-brand">Scope</div>
+      <nav class="nav-links">
+        <span class="nav-link">Logged in as student@example.com</span>
+      </nav>
+    </header>
+
+    <div class="dash-layout">
+      <aside class="dash-sidebar">
+        <div class="dash-sidebar-title">Dashboard</div>
+        <nav class="dash-nav">
+          <div class="dash-nav-item active">My Courses</div>
+          <div class="dash-nav-item">Lessons</div>
+          <div class="dash-nav-item">Quizzes</div>
+          <div class="dash-nav-item">Account</div>
+        </nav>
+      </aside>
+
+      <main class="dash-main">
+        <header class="dash-header">
+          <div>
+            <h1 class="dash-title">My Courses</h1>
+            <div class="dash-role-notes">Student view – enrolled courses and access to lessons.</div>
+          </div>
+        </header>
+
+        <section>
+          <div class="dash-cards">
+            <article class="dash-course-card">
+              <h2 class="dash-course-title">Programming Fundamentals</h2>
+              <div class="dash-course-meta">Enrolled · 8 lessons · 1 quiz</div>
+              <p class="card-body">Core concepts of programming, control flow, and data structures.</p>
+              <div class="dash-course-actions">
+                <button class="btn-primary">View Lessons</button>
+                <button class="btn-ghost">View Course</button>
+              </div>
+            </article>
+            <article class="dash-course-card">
+              <h2 class="dash-course-title">Modern React Interfaces</h2>
+              <div class="dash-course-meta">Enrolled · 6 lessons · 2 quizzes</div>
+              <p class="card-body">Component-driven UI, routing, and state management with React.</p>
+              <div class="dash-course-actions">
+                <button class="btn-primary">View Lessons</button>
+                <button class="btn-ghost">View Course</button>
+              </div>
+            </article>
+            <article class="dash-course-card">
+              <h2 class="dash-course-title">APIs with Django REST</h2>
+              <div class="dash-course-meta">Enrolled · 5 lessons · 1 quiz</div>
+              <p class="card-body">Build and secure APIs backed by Django models.</p>
+              <div class="dash-course-actions">
+                <button class="btn-primary">View Lessons</button>
+                <button class="btn-ghost">View Course</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="dash-annotation">
+          <div class="dash-annotation-title">Role annotations</div>
+          <p>
+            <strong>Student:</strong> sees this "My Courses" grid, can enroll, view lessons, and launch quizzes.
+          </p>
+          <p>
+            <strong>Teacher:</strong> reuses the same dashboard shell, but the main panel shows a
+            "My Courses" table and a simple "Create Course" form instead of this card grid.
+          </p>
+          <p>
+            <strong>Admin:</strong> reuses the same shell, but the main panel shows a "Users" table with
+            columns for username, email, role (student/teacher/admin), and toggles for staff/superuser.
+          </p>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

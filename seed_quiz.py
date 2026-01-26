@@ -1,3 +1,5 @@
+"""Create a sample quiz for the first lesson to aid demos."""
+
 import os
 import django
 

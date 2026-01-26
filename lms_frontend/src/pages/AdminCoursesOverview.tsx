@@ -1,3 +1,4 @@
+// Admin view to inspect teachers and their courses, and create courses on their behalf.
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../services/api';
 

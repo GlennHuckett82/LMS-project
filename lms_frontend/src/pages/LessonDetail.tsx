@@ -1,3 +1,4 @@
+// Lesson detail view: fetches the lesson HTML, lets students mark complete, links to quiz.
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';

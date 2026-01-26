@@ -1,3 +1,4 @@
+"""Course API views for listing, creating, and managing ownership rules."""
 
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -26,6 +27,7 @@ class CourseListCreateView(generics.ListCreateAPIView):
         if self.request.method == 'POST':
             # Allow teachers and admins to create courses.
             return [IsAuthenticated(), IsTeacherOrAdmin()]
+        # Empty list here means "AllowAny" in DRF; listing courses is public.
         return []
 
     def perform_create(self, serializer):

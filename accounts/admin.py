@@ -1,3 +1,4 @@
+"""Admin customization for the custom User model with role visibility."""
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin

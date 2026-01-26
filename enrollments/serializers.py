@@ -1,3 +1,5 @@
+"""Serializers for enrollment records, rosters, and student enrollment lists."""
+
 from rest_framework import serializers
 from .models import Enrollment
 from courses.serializers import CourseSerializer

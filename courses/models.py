@@ -1,3 +1,5 @@
+"""Course domain model: links a teacher to titled content with metadata."""
+
 from django.db import models
 from django.conf import settings
 

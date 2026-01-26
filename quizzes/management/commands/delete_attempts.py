@@ -1,3 +1,5 @@
+"""Command to wipe all quiz attempts during development/testing."""
+
 from django.core.management.base import BaseCommand
 from quizzes.models import QuizAttempt
 

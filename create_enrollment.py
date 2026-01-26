@@ -1,3 +1,4 @@
+"""Standalone helper to enroll the first student into the first course."""
 
 import os
 import django

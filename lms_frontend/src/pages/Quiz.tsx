@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import './Quiz.css';
@@ -22,6 +22,8 @@ interface Quiz {
     questions: Question[];
 }
 
+// Quiz page: fetches the quiz for a lesson, collects one answer per question, then posts them.
+// Built to read linearly so new contributors can follow the async flow.
 const QuizPage = () => {
     const { lessonId } = useParams<{ lessonId: string }>();
     const [quiz, setQuiz] = useState<Quiz | null>(null);
@@ -32,6 +34,7 @@ const QuizPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // Pull the quiz for the current lesson as soon as the page mounts.
         const fetchQuiz = async () => {
             try {
                 const response = await api.get(`/quizzes/${lessonId}/`);
@@ -47,6 +50,7 @@ const QuizPage = () => {
         fetchQuiz();
     }, [lessonId, accessToken]);
 
+    // Record which choice a user picked for a given question.
     const handleAnswerChange = (questionId: number, choiceId: number) => {
         setSelectedAnswers(prev => ({
             ...prev,
@@ -56,6 +60,7 @@ const QuizPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        // Light guard: make sure every question has an answer before sending to the API.
         if (Object.keys(selectedAnswers).length !== quiz?.questions.length) {
             alert('Please answer all questions before submitting.');
             return;
@@ -71,9 +76,7 @@ const QuizPage = () => {
 
         try {
             const response = await api.post('/quizzes/attempt/', submissionData);
-            // The backend will create the attempt and return the new attempt's ID.
-            // We need to implement the result page to redirect to.
-            // For now, let's assume the attempt object is returned directly
+            // Backend returns the new attempt; redirect to the result screen with its id.
             const attemptId = response.data.id;
             navigate(`/quiz/result/${attemptId}`);
         } catch (err: any) {

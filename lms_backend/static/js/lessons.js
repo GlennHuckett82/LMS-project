@@ -1,3 +1,5 @@
+// Drag-and-drop helper to let learners drop code snippets into a target area.
+// Kept framework-free so it runs in the plain lesson template.
 document.addEventListener("DOMContentLoaded", () => {
   const dropZone = document.getElementById('drop-zone');
   const codeBlocks = document.querySelectorAll('.code-block');

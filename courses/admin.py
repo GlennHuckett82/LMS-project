@@ -1,3 +1,4 @@
+"""Django admin configuration for Course entries."""
 
 from django.contrib import admin
 from .models import Course

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scope – Lesson Detail (Desktop 1440)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .lesson-main {
+      padding: 24px 80px 40px 80px;
+    }
+    .lesson-breadcrumb {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    .lesson-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .lesson-content {
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      background-color: #ffffff;
+      padding: 20px 22px;
+      min-height: 260px;
+      margin-bottom: 20px;
+    }
+    .lesson-paragraph-placeholder {
+      height: 10px;
+      border-radius: 999px;
+      background-color: #e5e7eb;
+      margin-bottom: 10px;
+      max-width: 90%;
+    }
+    .lesson-paragraph-placeholder:nth-child(2) {
+      max-width: 80%;
+    }
+    .lesson-paragraph-placeholder:nth-child(3) {
+      max-width: 70%;
+    }
+    .lesson-actions {
+      display: flex;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="navbar">
+      <div class="navbar-brand">Scope</div>
+      <nav class="nav-links">
+        <span class="nav-link">Dashboard</span>
+      </nav>
+    </header>
+
+    <main class="lesson-main">
+      <div class="lesson-breadcrumb">Programming Fundamentals / Lesson 1</div>
+      <h1 class="lesson-title">Getting Started with Variables</h1>
+
+      <section class="lesson-content">
+        <div class="lesson-paragraph-placeholder"></div>
+        <div class="lesson-paragraph-placeholder"></div>
+        <div class="lesson-paragraph-placeholder"></div>
+        <div class="lesson-paragraph-placeholder" style="max-width: 60%;"></div>
+      </section>
+
+      <div class="lesson-actions">
+        <button class="btn-primary">Mark Complete</button>
+        <button class="btn-ghost">Take the Quiz</button>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,322 @@
+/* Base styles for 1440px desktop wireframes */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* background stone */
+  background-color: #f5f5f4;
+  /* deep slate */
+  color: #0f172a;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.page {
+  max-width: 1440px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-inner {
+  flex: 1;
+  padding: 0 80px 48px 80px;
+}
+
+.navbar {
+  height: 72px;
+  /* surface border */
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 80px;
+}
+
+.navbar-brand {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  font-size: 15px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #4b5563;
+}
+
+.nav-link.primary {
+  /* primary teal */
+  color: #0d9488;
+}
+
+.main-section {
+  margin-top: 40px;
+}
+
+.hero {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 64px;
+}
+
+.hero-left {
+  flex: 1.1;
+}
+
+.hero-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.hero-subtitle {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  color: #4b5563;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  /* primary teal */
+  background-color: #0d9488;
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+}
+
+.hero-illustration {
+  width: 420px;
+  height: 260px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ccfbf1, #e5e7eb);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+}
+
+.section {
+  margin-bottom: 56px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background-color: #f9fafb;
+  border-radius: 12px;
+  padding: 16px 18px;
+  /* surface border */
+  border: 1px solid #e5e7eb;
+}
+
+.card-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background-color: #ccfbf1;
+  color: #0f766e;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card-body {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.instructor-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.instructor-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #99f6e4, #e5e7eb);
+  margin-bottom: 4px;
+}
+
+.instructor-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.instructor-focus {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.instructor-bio {
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.benefit-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: #ccfbf1;
+  margin-bottom: 10px;
+}
+
+.benefit-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.benefit-body {
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.footer {
+  border-top: 1px solid #e1e4ea;
+  padding: 16px 80px;
+  font-size: 13px;
+  color: #6b7280;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+}
+
+.footer-link {
+  /* primary teal */
+  color: #0d9488;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+/* Auth pages */
+
+.page-auth {
+  max-width: 1440px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 80px;
+  background: radial-gradient(circle at top left, #ccfbf1, transparent 60%),
+              radial-gradient(circle at bottom right, #e5e7eb, transparent 50%);
+}
+
+.auth-card {
+  width: 380px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 28px 24px 24px;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+  border: 1px solid #e5e7eb;
+}
+
+.auth-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.form-input {
+  width: 100%;
+  height: 40px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.form-error-placeholder {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.auth-actions {
+  margin-top: 18px;
+  margin-bottom: 12px;
+}
+
+.auth-secondary {
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.auth-link {
+  /* primary teal */
+  color: #0d9488;
+  text-decoration: none;
+}
+
+/* Dashboard + lesson + quiz basic layout will reuse navbar + page-inner */

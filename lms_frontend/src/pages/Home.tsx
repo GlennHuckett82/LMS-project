@@ -1,7 +1,7 @@
 
 // Home page for the LMS frontend. Displays navigation, hero section, featured courses, instructors, and platform highlights.
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../App.css";
 
 function Home() {
@@ -129,7 +129,7 @@ function Home() {
 				</div>
 			</section>
 			<footer className="site-footer">
-				<p>&copy; 2025 Scope. All Rights Reserved. | <a href="mailto:info@scope.com">Contact</a> | <a href="#">LinkedIn</a></p>
+				<p>&copy; 2025 Scope. All Rights Reserved. | <a href="mailto:info@scope.com">Contact</a> | <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a></p>
 			</footer>
 		</div>
 	);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
 import './Quiz.css'; // Reusing the same CSS file
@@ -30,6 +30,7 @@ interface QuizResultData {
     answers: AnswerResult[];
 }
 
+// Quiz result page: fetches the attempt by id and shows score plus explanations for any misses.
 const QuizResultPage = () => {
     const { attemptId } = useParams<{ attemptId: string }>();
     const [result, setResult] = useState<QuizResultData | null>(null);
@@ -37,6 +38,7 @@ const QuizResultPage = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        // Retrieve the graded attempt as soon as we know the attempt id.
         const fetchResult = async () => {
             try {
                 const response = await api.get(`/quizzes/result/${attemptId}/`);

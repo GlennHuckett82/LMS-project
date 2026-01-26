@@ -12,6 +12,8 @@ interface UserRow {
   is_superuser?: boolean;
 }
 
+// Admin panel: fetches all users, lets you tweak role/staff flags in-place.
+// The UI is intentionally minimal so the permission flow is easy to follow.
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -19,6 +21,7 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Grab the full user list (admin-only endpoint). Keep errors visible to the user.
   const fetchUsers = async () => {
     setLoading(true);
     setError(null);
@@ -36,6 +39,7 @@ const AdminDashboard: React.FC = () => {
     fetchUsers();
   }, []);
 
+  // Light PATCH helper so each control can update a single user without a page reload.
   const updateUser = async (u: UserRow, updates: Partial<UserRow>) => {
     try {
       const res = await api.patch(`accounts/users/${u.id}/`, updates);

@@ -1,4 +1,6 @@
 
+"""Utility management command to enroll the first student into the first course."""
+
 from django.core.management.base import BaseCommand
 from accounts.models import User
 from courses.models import Course

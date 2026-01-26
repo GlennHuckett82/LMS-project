@@ -1,3 +1,4 @@
+// Entry point that mounts the React app into the DOM and wires up performance reporting.
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';

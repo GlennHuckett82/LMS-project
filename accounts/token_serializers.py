@@ -1,4 +1,7 @@
+"""SimpleJWT serializer that injects the user's role into access tokens."""
+
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

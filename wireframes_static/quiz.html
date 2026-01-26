@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scope – Quiz & Result (Desktop 1440)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .quiz-layout {
+      display: flex;
+      padding: 24px 80px 40px 80px;
+      gap: 32px;
+    }
+    .quiz-main {
+      flex: 2;
+    }
+    .quiz-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .quiz-question {
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .quiz-question-text {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .quiz-actions {
+      margin-top: 16px;
+    }
+    .quiz-aside {
+      flex: 1;
+    }
+    .quiz-result-card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      padding: 16px 18px;
+    }
+    .quiz-result-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .quiz-score {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .quiz-status {
+      font-size: 14px;
+      color: #16a34a;
+      margin-bottom: 10px;
+    }
+    .quiz-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="navbar">
+      <div class="navbar-brand">Scope</div>
+      <nav class="nav-links">
+        <span class="nav-link">Dashboard</span>
+      </nav>
+    </header>
+
+    <main class="quiz-layout">
+      <section class="quiz-main">
+        <h1 class="quiz-title">Quiz: Getting Started with Variables</h1>
+
+        <article class="quiz-question">
+          <div class="quiz-question-text">1. What is a variable in programming?</div>
+          <label class="quiz-option"><input type="radio" name="q1" /> A fixed value that never changes.</label>
+          <label class="quiz-option"><input type="radio" name="q1" /> A named storage location for data.</label>
+          <label class="quiz-option"><input type="radio" name="q1" /> A type of error.</label>
+        </article>
+
+        <article class="quiz-question">
+          <div class="quiz-question-text">2. Which of the following is a valid variable name?</div>
+          <label class="quiz-option"><input type="radio" name="q2" /> 1variable</label>
+          <label class="quiz-option"><input type="radio" name="q2" /> total_score</label>
+          <label class="quiz-option"><input type="radio" name="q2" /> for</label>
+        </article>
+
+        <article class="quiz-question">
+          <div class="quiz-question-text">3. Why do we use variables?</div>
+          <label class="quiz-option"><input type="radio" name="q3" /> To repeat code.</label>
+          <label class="quiz-option"><input type="radio" name="q3" /> To store and reuse values.</label>
+          <label class="quiz-option"><input type="radio" name="q3" /> To slow down programs.</label>
+        </article>
+
+        <div class="quiz-actions">
+          <button class="btn-primary">Submit</button>
+        </div>
+      </section>
+
+      <aside class="quiz-aside">
+        <div class="quiz-result-card">
+          <div class="quiz-result-title">Quiz Result (example state)</div>
+          <div class="quiz-score">8 / 10</div>
+          <div class="quiz-status">Passed</div>
+          <p class="card-body">Great work. You have a solid understanding of variables.</p>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <button class="btn-primary">Back to Dashboard</button>
+            <button class="btn-ghost">Review Lesson</button>
+          </div>
+          <p class="quiz-note">
+            In the real app this panel appears after submitting the quiz.
+            For wireframing we show it on the same screen.
+          </p>
+        </div>
+      </aside>
+    </main>
+  </div>
+</body>
+</html>

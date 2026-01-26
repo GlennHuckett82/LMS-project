@@ -1,3 +1,4 @@
+"""Lesson content plus per-student progress tracking models."""
 
 from django.db import models
 from django.conf import settings

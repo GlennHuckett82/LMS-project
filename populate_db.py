@@ -1,3 +1,4 @@
+"""Utility script to create batches of fake users via the public API."""
 
 import requests
 from faker import Faker

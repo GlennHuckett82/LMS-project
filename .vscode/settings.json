@@ -1,3 +1,4 @@
 {
-    "python.defaultInterpreterPath": "C:/Users/gph19/lms_backend/venv/Scripts/python.exe"
+    "python.defaultInterpreterPath": "C:/Users/gph19/lms_backend/venv/Scripts/python.exe",
+    "livePreview.defaultPreviewPath": "/wireframes_static/home.html"
 }

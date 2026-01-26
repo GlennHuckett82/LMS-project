@@ -51,7 +51,7 @@ npm test
 - `GET /courses/` — list courses
 - `GET /courses/{id}/` — course detail
 - `GET /enrollments/my-enrollments/` — user's enrollments
-- `POST /enrollments/course/{course_id}/enroll/` — enroll in course
+- `POST /enrollments/courses/{id}/enroll/` — enroll in course
 - `GET /lessons/` — list lessons (filtered by user role/enrollment)
 - `GET /lessons/{id}/` — lesson detail
 - `POST /lessons/progress/` — update lesson progress

@@ -1,3 +1,4 @@
+// Simple top navigation shared across public pages; highlights current route via location.
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../App.css";

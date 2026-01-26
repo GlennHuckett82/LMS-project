@@ -1,3 +1,5 @@
+"""Ensure demo users exist with the correct roles for quick testing."""
+
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 

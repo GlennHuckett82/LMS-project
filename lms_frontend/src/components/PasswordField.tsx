@@ -1,3 +1,4 @@
+// Reusable password input with show/hide toggle and accessible labeling.
 import React, { useState } from 'react';
 import Eye from './icons/Eye';
 import EyeOff from './icons/EyeOff';

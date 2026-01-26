@@ -1,3 +1,4 @@
+"""Seed helper to create demo teachers, courses, lessons, and one enrollment."""
 
 from django.core.management.base import BaseCommand
 from courses.models import Course

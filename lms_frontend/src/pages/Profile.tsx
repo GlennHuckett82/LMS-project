@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { Link } from "react-router-dom";
 import "../App.css";
 import api from '../services/api';
+
+// Student profile page: shows all courses, highlights which ones you’re enrolled in,
+// lets you enroll, and opens lessons per course. Written to be easy to trace step-by-step.
 
 interface Lesson {
   id: number;
@@ -34,8 +37,8 @@ const Profile: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [enrolling, setEnrolling] = useState<number | null>(null);
 
-  // Fetch all courses (no lessons attached)
-  const fetchCourses = async () => {
+  // Fetch all courses (without lessons) so we can render the catalog.
+  const fetchCourses = useCallback(async () => {
     try {
       const res = await api.get('/courses/');
       let coursesArray: Course[] = [];
@@ -50,29 +53,10 @@ const Profile: React.FC = () => {
       setError("Failed to fetch courses");
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Fetch user's enrollments
-  const fetchEnrollments = async () => {
-    try {
-      const res = await api.get('/enrollments/my-enrollments/');
-      let enrollmentsArray: Enrollment[] = [];
-      if (Array.isArray(res.data)) {
-        enrollmentsArray = res.data;
-      } else if (res.data.results) {
-        enrollmentsArray = res.data.results;
-      }
-      const ids = enrollmentsArray.map((enrollment: Enrollment) => enrollment.course.id);
-      setEnrolledCourseIds(ids);
-      // After enrollments are fetched, fetch lessons for enrolled courses
-      fetchLessonsForCourses(ids);
-    } catch (err) {
-      // If enrollments can't be fetched, show nothing
-    }
-  };
-
-  // Fetch lessons for all enrolled courses
-  const fetchLessonsForCourses = async (courseIds: number[]) => {
+  // Fetch lessons once we know which courses are enrolled; supports array or paginated responses.
+  const fetchLessonsForCourses = useCallback(async (courseIds: number[]) => {
     try {
       const res = await api.get('/lessons/');
       console.log('res.data:', res.data);
@@ -101,35 +85,55 @@ const Profile: React.FC = () => {
       console.error('Error fetching lessons:', err);
       setCourseLessons({});
     }
+  }, []);
+
+  // Fetch the courses this user is enrolled in so we can show the right buttons/state.
+  const fetchEnrollments = useCallback(async () => {
+    try {
+      const res = await api.get('/enrollments/my-enrollments/');
+      let enrollmentsArray: Enrollment[] = [];
+      if (Array.isArray(res.data)) {
+        enrollmentsArray = res.data;
+      } else if (res.data.results) {
+        enrollmentsArray = res.data.results;
+      }
+      const ids = enrollmentsArray.map((enrollment: Enrollment) => enrollment.course.id);
+      setEnrolledCourseIds(ids);
+      // After enrollments are fetched, fetch lessons for enrolled courses
+      fetchLessonsForCourses(ids);
+    } catch (err) {
+      // If enrollments can't be fetched, show nothing
+    }
+  }, [fetchLessonsForCourses]);
+
+  // Enroll in a course and then refresh enrollments + course list so the UI updates.
+  const handleEnroll = async (courseId: number) => {
+    setEnrolling(courseId);
+    try {
+      await api.post(`/enrollments/courses/${courseId}/enroll/`);
+      fetchEnrollments();
+      fetchCourses();
+      setError(null);
+    } catch (err: any) {
+      setError("Failed to enroll.");
+    } finally {
+      setEnrolling(null);
+    }
   };
 
-  // Enroll in a course
-const handleEnroll = async (courseId: number) => {
-  setEnrolling(courseId);
-  try {
-    await api.post(`/enrollments/courses/${courseId}/enroll/`);
-    // Refresh enrollments and courses
-    fetchEnrollments();
-    fetchCourses();
-    setError(null);
-  } catch (err: any) {
-    setError("Failed to enroll.");
-  } finally {
-    setEnrolling(null);
-  }
-};
-
   useEffect(() => {
+    // Initial load: get courses and enrollments. Also refresh when tab regains focus so data stays fresh.
     fetchCourses();
     fetchEnrollments();
-    window.addEventListener('focus', () => {
+    const onFocus = () => {
       fetchCourses();
       fetchEnrollments();
-    });
-    return () => {
-      window.removeEventListener('focus', fetchCourses);
     };
-  }, []);
+    window.addEventListener('focus', onFocus);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [fetchCourses, fetchEnrollments]);
 
   return (
     <div className="dashboard-container">

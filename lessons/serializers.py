@@ -1,4 +1,6 @@
 
+"""Serializers for lessons and completion progress exposed via the API."""
+
 from rest_framework import serializers
 from .models import Lesson, LessonProgress
 from courses.models import Course

@@ -11,6 +11,8 @@ interface CourseRow {
   created_at?: string;
 }
 
+// Simple teacher control panel: lists your courses and lets you create new ones.
+// Kept intentionally direct so a beginner can trace data loading and creation in one file.
 const TeacherDashboard: React.FC = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ const TeacherDashboard: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
+  // Load only the courses owned by the logged-in teacher; handles paginated or plain arrays.
   const fetchMyCourses = async () => {
     setLoading(true);
     setError(null);
@@ -41,6 +44,7 @@ const TeacherDashboard: React.FC = () => {
   };
 
   useEffect(() => {
+    // Initial page load: populate the table so you immediately see what you own.
     fetchMyCourses();
   }, []);
 

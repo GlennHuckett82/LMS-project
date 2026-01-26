@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
+// Simple auth context: keeps tokens in memory + localStorage and exposes login/logout
+// so the rest of the app can stay lean. Designed to be easy to read for beginners.
+
 interface AuthContextType {
   isAuthenticated: boolean;
   accessToken: string | null;
@@ -16,11 +19,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!accessToken);
 
+  // Keep the derived isAuthenticated flag in sync whenever the token changes.
   useEffect(() => {
     setIsAuthenticated(!!accessToken);
   }, [accessToken]);
 
-  // Listen for token expiration or removal
+  // Listen for token changes in other tabs/windows so logout/login stays in sync across the browser.
   useEffect(() => {
     const handleStorage = () => {
       const token = localStorage.getItem("accessToken");
@@ -32,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = (accessTokenValue: string, refreshTokenValue?: string) => {
-    // Persist tokens for interceptors
+    // Persist tokens so the Axios interceptor can attach them.
     localStorage.setItem("accessToken", accessTokenValue);
     if (refreshTokenValue) {
       localStorage.setItem("refreshToken", refreshTokenValue);

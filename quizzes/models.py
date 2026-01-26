@@ -1,3 +1,5 @@
+"""Quiz, question, choice, and attempt models tied to lessons."""
+
 from django.db import models
 from django.conf import settings
 from lessons.models import Lesson

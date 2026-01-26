@@ -1,3 +1,5 @@
+"""Routes exposing course list, creation, and teacher-owned views."""
+
 from django.urls import path
 from .views import CourseListCreateView, CourseRetrieveUpdateDestroyView, MyCoursesListView
 

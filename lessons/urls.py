@@ -1,4 +1,6 @@
 
+"""Routes for lesson CRUD APIs, HTML detail view, and completion endpoint."""
+
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import LessonViewSet, lesson_detail_view, LessonProgressView

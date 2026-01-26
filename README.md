@@ -27,6 +27,11 @@ Comprehensive full-stack Learning Management System (LMS) project containing a D
   cd c:\Users\gph19\lms_backend\lms_frontend
   npx tsc --noEmit
   ```
+- Frontend build: from `lms_frontend/`, production build passes:
+  ```powershell
+  cd c:\Users\gph19\lms_backend\lms_frontend
+  npm run build
+  ```
 This project implements an LMS with role-based access (student, teacher, admin). Students can enroll and view lessons for courses they are enrolled in; teachers manage their own courses and lessons; admins have full access. The backend exposes a JSON API and the frontend consumes it using JWT authentication.
 
 ## Repository layout
@@ -164,6 +169,7 @@ If a student sees "No lessons available" while the DB lists lessons:
 - Validation runs (latest):
   - Backend: `python manage.py test` (42 tests) — last run: pass.
   - Frontend: `npx tsc --noEmit` — last run: pass.
+  - Frontend: `npm run build` — last run: pass.
 
 ## Planned enhancement: richer Courses page
 - Keep the Courses page but add value beyond the homepage cards by making each course tile expandable (accordion) or opening a modal instead of redirecting.
@@ -174,15 +180,9 @@ If a student sees "No lessons available" while the DB lists lessons:
   - Rationale: differentiates Courses page from homepage by giving enrollment decisions more context without navigating away.
 
 ## Design & UX (screenshots & wireframes)
-- Screenshots (stored in `screenshots/`):
-  - ![Profile Desktop](screenshots/profile-desktop.png)
-  - ![Profile Mobile](screenshots/profile-mobile.png)
-  - ![Teacher Dashboard Desktop](screenshots/teacher-dashboard-desktop.png)
-  - ![Teacher Dashboard Mobile](screenshots/teacher-dashboard-mobile.png)
-  - ![Admin Dashboard Desktop](screenshots/admin-dashboard-desktop.png)
-  - ![Admin Dashboard Mobile](screenshots/admin-dashboard-mobile.png)
+- Screenshots (optional, can be stored in docs/screenshots/): example desktop and mobile views for the Profile, Teacher Dashboard, and Admin Dashboard pages.
 - Palette & components: cool blues/greys for primary UI (`#334e68`, `#486581`), green success (`#4fbb6b`), pink/red errors (`#e11d48`); system UI font stack; shared `.button` styles; cards and responsive tables.
-- Wireframes: (add Figma/Miro link here once ready).
+- Wireframes & prototype: Figma interactive prototype (Scope LMS – Desktop Wireframes): https://www.figma.com/design/PNq1yUjD0RpyimaPrcyAxe/lms-project-visual-DNA?node-id=56-13&t=EWdBVNuHGSXMncz2-1; static PNG exports in [docs/wireframes](docs/wireframes) (including an optional user-flow chart image); source HTML/CSS for the six wireframe screens in [wireframes_static](wireframes_static).
 - **Planned UX additions (accordion/modal Courses page)**: see [docs/courses-page-enhancement.md](docs/courses-page-enhancement.md) for the detailed plan and code sketch.
 
 ## Testing

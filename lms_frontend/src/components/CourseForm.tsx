@@ -1,3 +1,4 @@
+// Placeholder form shell for creating/editing a course; kept minimal until full UX arrives.
 import React from 'react';
 
 const CourseForm: React.FC = () => {

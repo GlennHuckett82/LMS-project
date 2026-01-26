@@ -1,3 +1,4 @@
+"""URL routes for account creation, authentication, and admin user actions."""
 
 from django.urls import path
 from .views import UserCreate, MyTokenObtainPairView, me, AdminUserList, AdminUserDetail

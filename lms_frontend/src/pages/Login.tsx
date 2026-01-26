@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { loginUser, fetchMe } from "../services/auth";
 import PasswordField from "../components/PasswordField";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
 import { useAuth } from "../auth/AuthContext";
  
 

@@ -1,3 +1,5 @@
+"""Routes for fetching quizzes, submitting attempts, and viewing results."""
+
 from django.urls import path
 from .views import QuizDetailView, QuizAttemptView, QuizResultView
 

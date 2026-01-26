@@ -1,3 +1,5 @@
+"""Quiz endpoints for retrieval, submission, and result viewing."""
+
 from rest_framework import generics, permissions
 from .models import Quiz, QuizAttempt
 from .serializers import QuizSerializer, QuizAttemptSerializer, QuizResultSerializer
@@ -27,6 +29,7 @@ class QuizAttemptView(generics.CreateAPIView):
         """
         Pass request to the serializer.
         """
+        # Serializer needs the request to attach the authenticated student to the attempt.
         return {'request': self.request}
 
 # /api/quizzes/result/<attempt_id>/

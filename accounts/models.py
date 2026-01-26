@@ -1,4 +1,11 @@
 
+"""Custom user model with explicit role support for the LMS.
+
+The built-in Django `AbstractUser` is extended with a `role` field so we can
+quickly branch permission logic (student/teacher/admin) across the API and
+frontend. Keeping the role here keeps checks consistent everywhere else.
+"""
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 

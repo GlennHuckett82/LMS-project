@@ -1,3 +1,8 @@
+"""Account and auth endpoints: registration, JWT, admin user management.
+
+Each view keeps permissions explicit so role-based access stays obvious to
+future readers. JWT views are thin wrappers around SimpleJWT.
+"""
 
 from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes

@@ -1,3 +1,5 @@
+"""Simple seeding helper to inject a known lesson into Intro to Python."""
+
 from lessons.models import Lesson
 from courses.models import Course
 

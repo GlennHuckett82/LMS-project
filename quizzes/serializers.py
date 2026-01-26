@@ -1,10 +1,13 @@
+"""Serializers covering quiz delivery, attempts, and graded results."""
+
 from rest_framework import serializers
 from .models import Quiz, Question, Choice, QuizAttempt, Answer
 
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
-        fields = ['id', 'text'] # Not including is_correct
+        # Do not expose is_correct here so students cannot see the answer key from the API.
+        fields = ['id', 'text']
 
 class QuestionSerializer(serializers.ModelSerializer):
     choices = ChoiceSerializer(many=True, read_only=True)

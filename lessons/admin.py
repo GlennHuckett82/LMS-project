@@ -1,3 +1,4 @@
+"""Admin registration for lessons to keep content manageable via Django admin."""
 
 from django.contrib import admin
 from .models import Lesson

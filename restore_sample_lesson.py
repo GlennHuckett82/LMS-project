@@ -1,3 +1,5 @@
+"""Reset or create a sample lesson record for quick manual testing."""
+
 from lessons.models import Lesson
 from courses.models import Course
 

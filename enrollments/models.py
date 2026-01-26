@@ -1,3 +1,5 @@
+"""Enrollment model linking students to courses with a unique constraint."""
+
 from django.db import models
 from django.conf import settings
 from courses.models import Course
