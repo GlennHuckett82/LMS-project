@@ -34,6 +34,8 @@ Comprehensive full-stack Learning Management System (LMS) project containing a D
   ```
 This project implements an LMS with role-based access (student, teacher, admin). Students can enroll and view lessons for courses they are enrolled in; teachers manage their own courses and lessons; admins have full access. The backend exposes a JSON API and the frontend consumes it using JWT authentication.
 
+For assessor-specific guidance and quick navigation, see [docs/tutor-notes.md](docs/tutor-notes.md).
+
 ## Repository layout
 - `lms_backend/` — Django backend (APIs, models, migrations, management commands)
 - `lms_frontend/` — React + TypeScript frontend
