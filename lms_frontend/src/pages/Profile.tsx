@@ -137,8 +137,8 @@ const Profile: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
-        <h2 style={{ color: "#334e68", fontWeight: 800 }}>My Profile</h2>
+      <div className="dashboard-header">
+        <h2 className="heading-xl">My Profile</h2>
         <button
           className="button"
           onClick={() => { logout(); window.location.href = "/"; }}
@@ -149,7 +149,7 @@ const Profile: React.FC = () => {
       {loading ? (
         <p>Loading courses...</p>
       ) : error ? (
-        <p style={{ color: "#e11d48" }}>{error}</p>
+        <p className="text-error-simple">{error}</p>
       ) : (
         <>
           <div className="course-grid">
@@ -170,8 +170,7 @@ const Profile: React.FC = () => {
                     </button>
                     {!isEnrolled && (
                       <button
-                        className="button"
-                        style={{ background: '#2563eb', color: '#fff' }}
+                        className="button button-enroll-primary"
                         onClick={() => handleEnroll(course.id)}
                         disabled={enrolling === course.id}
                       >
@@ -180,18 +179,18 @@ const Profile: React.FC = () => {
                     )}
                   </div>
                   {isEnrolled && openDropdown === course.id && (
-                    <div style={{ marginTop: "1rem", background: "#f7f9fb", borderRadius: "8px", boxShadow: "0 2px 8px rgba(51, 78, 104, 0.07)", padding: "1rem" }}>
-                      <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                    <div className="lessons-panel">
+                      <ul className="lessons-list">
                         {lessons.length === 0 ? (
-                          <li style={{ color: "#334e68", fontWeight: 600 }}>No lessons available.</li>
+                          <li className="lessons-list-item">No lessons available.</li>
                         ) : (
                           lessons.map((lesson) => (
-                            <li key={lesson.id} style={{ color: "#334e68", fontWeight: 600, marginBottom: "0.5rem" }}>
-                              {lesson.is_completed && <span style={{ color: '#22c55e', marginRight: '0.5rem' }}>✓</span>}
-                              <span style={{ textDecoration: 'none', color: '#334e68', fontWeight: 600, marginRight: '1rem' }}>{lesson.title}</span>
+                            <li key={lesson.id} className="lessons-list-item-spaced">
+                              {lesson.is_completed && <span className="lesson-complete-icon">✓</span>}
+                              <span className="lesson-title-text">{lesson.title}</span>
                               <Link
                                 to={`/lessons/${lesson.id}`}
-                                style={{ marginLeft: "1rem", color: "#486581", fontWeight: 400, textDecoration: "underline" }}
+                                className="lesson-link-subtle"
                               >
                                 Open Lesson
                               </Link>
@@ -205,7 +204,7 @@ const Profile: React.FC = () => {
               );
             })}
           </div>
-          <div style={{ marginTop: '2.5rem', textAlign: 'center', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto', color: '#334e68', fontSize: '1.15rem', fontWeight: 500 }}>
+          <div className="profile-cta">
             <p>
               <strong>Ready to level up?</strong> Every course you see above is a new opportunity to grow your skills and unlock your potential. Dive into lessons, challenge yourself, and remember: every step you take brings you closer to your goals. Stay curious, keep building, and enjoy the journey—your future in tech starts here!
             </p>

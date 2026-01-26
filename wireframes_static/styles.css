@@ -113,6 +113,10 @@ body {
   border: none;
 }
 
+.btn-primary.btn-full-width {
+  width: 100%;
+}
+
 .hero-illustration {
   width: 420px;
   height: 260px;
@@ -169,6 +173,16 @@ body {
   font-size: 14px;
   color: #4b5563;
   line-height: 1.5;
+}
+
+.quiz-result-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.lesson-paragraph-placeholder.lesson-paragraph-short {
+  max-width: 60%;
 }
 
 .instructor-card {

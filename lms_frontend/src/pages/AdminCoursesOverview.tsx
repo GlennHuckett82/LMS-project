@@ -134,7 +134,7 @@ const AdminCoursesOverview: React.FC = () => {
                       <button className="button" onClick={() => toggleExpanded(t.id)} aria-label="Toggle courses" title="Toggle courses">
                         {isOpen ? 'Hide Courses' : 'Show Courses'}
                       </button>
-                      <button className="button" onClick={() => startCreateFor(t.id)} aria-label="Create for teacher" title="Create for teacher" style={{ marginLeft: 8 }}>
+                      <button className="button ml-2" onClick={() => startCreateFor(t.id)} aria-label="Create for teacher" title="Create for teacher">
                         Create Course
                       </button>
                     </td>
@@ -145,7 +145,7 @@ const AdminCoursesOverview: React.FC = () => {
                         {list.length === 0 ? (
                           <p>No courses for this teacher yet.</p>
                         ) : (
-                          <table className="table" style={{ marginTop: 8 }}>
+                          <table className="table mt-2">
                             <thead>
                               <tr>
                                 <th>ID</th>
@@ -172,7 +172,7 @@ const AdminCoursesOverview: React.FC = () => {
                   {creatingFor === t.id && (
                     <tr>
                       <td colSpan={4}>
-                        <div className="card" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                        <div className="card flex-row-wrap-center">
                           <input
                             aria-label="Course title"
                             type="text"
