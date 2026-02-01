@@ -14,11 +14,11 @@ SECRET_KEY = os.environ.get(
 # DEBUG is controlled via an environment variable (DEBUG="True" or "False")
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-if DEBUG:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-else:
-    # For simplicity in this assignment, allow all hosts in production
-    ALLOWED_HOSTS = ['*']
+# Always allow local addresses; also allow the Render hostname if present
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if render_host:
+    ALLOWED_HOSTS.append(render_host)
 
 # Application definition
 INSTALLED_APPS = [
