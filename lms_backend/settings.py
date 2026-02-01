@@ -1,16 +1,24 @@
-"""
-Django settings for lms_backend project.
-"""
+"""Django settings for lms_backend project."""
 
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-934e^9_8*mbbjyban@bpbdpl0qm4477!xtu@24q+$dw_+0_ke7'
+# In production (Render) this comes from the SECRET_KEY env var
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-934e^9_8*mbbjyban@bpbdpl0qm4477!xtu@24q+$dw_+0_ke7',
+)
 
-DEBUG = True
+# DEBUG is controlled via an environment variable (DEBUG="True" or "False")
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+if DEBUG:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+else:
+    # For simplicity in this assignment, allow all hosts in production
+    ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
