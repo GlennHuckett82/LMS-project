@@ -92,7 +92,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Use WhiteNoise's default static file handling without manifest hashing.
+# This avoids missing-manifest issues on Render where collectstatic is not run.
+# If you later add a collectstatic step to your build, you can switch back to
+# 'whitenoise.storage.CompressedManifestStaticFilesStorage'.
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
