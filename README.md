@@ -205,16 +205,39 @@ npm test
 - HTML (backend lesson page): rendered lesson detail page (`/courses/12/lessons/5/`) view source validated with the W3C Nu HTML checker (no errors or warnings).
 - CSS: `lms_frontend/src/index.css` validated with the W3C CSS Validator (CSS Level 3 + SVG, no errors).
 - Python: `python manage.py test` passes (42 tests) on the Django backend.
-## Deployment (when ready)
-- Backend (Django):
-  - Switch to PostgreSQL; set `DATABASES` in `settings.py` via environment variables.
-  - Set `DEBUG=False`, `SECRET_KEY`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`.
-  - Collect static: `python manage.py collectstatic` (use WhiteNoise or CDN); run with gunicorn/uvicorn via a process manager on your host (Render/Heroku/Dokku/etc.).
-  - Configure HTTPS and security headers on the platform.
-- Frontend (React):
-  - Build: `npm run build`.
-  - Deploy the `build/` output to Netlify/Vercel/Static hosting; set `REACT_APP_API_BASE_URL` to point at your deployed API.
-- Add your live URLs here after deployment.
+## Deployment
+
+### Backend (current deployment)
+- Platform: Render (Python Web Service).
+- Live API base URL: `https://lms-project-qc5k.onrender.com/api/`
+- Django admin URL: `https://lms-project-qc5k.onrender.com/admin/`
+- Admin login for assessment:
+  - Username: `demoAdmin`
+  - Password: `password`
+- Demo users and seeded data:
+  - `demoTeacher` with password `password` and role `teacher`.
+  - Additional teacher users (e.g. `alice`, `bob`, etc.) with password `password123` created by the seed command.
+  - Demo courses: Intro to Python, Frontend with React, Data Structures, Databases, DevOps Fundamentals; each has three lessons.
+- Start command on Render (runs on every deploy):
+  - `python manage.py migrate && python manage.py init_demo_data && gunicorn lms_backend.wsgi:application --bind 0.0.0.0:$PORT`
+  - This ensures all migrations are applied and demo data (users, courses, lessons, enrollment) is recreated for each fresh SQLite database on Render.
+- Environment notes:
+  - `SECRET_KEY` and `DEBUG` are read from environment variables in `lms_backend/settings.py`.
+  - `ALLOWED_HOSTS` always includes localhost and appends `RENDER_EXTERNAL_HOSTNAME` so the Render URL is allowed.
+  - For simplicity during this project, `DEBUG` is set to `True` on Render so detailed error pages are available if needed.
+
+### Frontend (planned Netlify deployment)
+- Build command (run in `lms_frontend/`): `npm run build`.
+- Publish directory: `build`.
+- Environment variable for API base URL (Netlify):
+  - `REACT_APP_API_BASE_URL = https://lms-project-qc5k.onrender.com/api`
+- The frontend is designed to read `REACT_APP_API_BASE_URL` (falling back to `http://127.0.0.1:8000/api` in local development).
+
+### Backend (future production hardening, optional)
+- Switch to PostgreSQL or another persistent database and configure `DATABASES` via environment variables.
+- Set `DEBUG=False` and configure `CSRF_TRUSTED_ORIGINS`, `SECURE_*` settings, and security headers.
+- Add a `collectstatic` step to the build pipeline and, if desired, re-enable WhiteNoise manifest storage in `lms_backend/settings.py`.
+- Configure HTTPS and security headers at the hosting platform level.
 
 ## Contributing
 - Use feature branches and open PRs with clear descriptions and tests.
