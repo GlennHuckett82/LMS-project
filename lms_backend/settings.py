@@ -119,7 +119,8 @@ REST_FRAMEWORK = {
     }
 }
 
-# ✅ Allow frontend at localhost:3000
+# ✅ Allow frontend at localhost:3000 and Netlify
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://lms-project-frontend.netlify.app",
 ]
