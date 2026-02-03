@@ -209,14 +209,14 @@ npm test
 
 ### Backend (current deployment)
 - Platform: Render (Python Web Service).
-- Live API base URL: `https://lms-project-qc5k.onrender.com/api/`
-- Django admin URL: `https://lms-project-qc5k.onrender.com/admin/`
+- Live API base URL: https://lms-project-qc5k.onrender.com/api/
+- Django admin URL: https://lms-project-qc5k.onrender.com/admin/
 - Admin login for assessment:
-  - Username: `demoAdmin`
-  - Password: `password`
+  - Username: demoAdmin
+  - Password: password
 - Demo users and seeded data:
-  - `demoTeacher` with password `password` and role `teacher`.
-  - Additional teacher users (e.g. `alice`, `bob`, etc.) with password `password123` created by the seed command.
+  - demoTeacher with password TeacherPass123 and role teacher.
+  - Additional teacher users (e.g. alice, bob, etc.) with password password123 created by the seed command.
   - Demo courses: Intro to Python, Frontend with React, Data Structures, Databases, DevOps Fundamentals; each has three lessons.
 - Start command on Render (runs on every deploy):
   - `python manage.py migrate && python manage.py init_demo_data && gunicorn lms_backend.wsgi:application --bind 0.0.0.0:$PORT`
@@ -227,11 +227,30 @@ npm test
   - For simplicity during this project, `DEBUG` is set to `True` on Render so detailed error pages are available if needed.
 
 ### Frontend (planned Netlify deployment)
-- Build command (run in `lms_frontend/`): `npm run build`.
-- Publish directory: `build`.
+- Build command (run in lms_frontend/): `npm run build`.
+- Publish directory: build.
 - Environment variable for API base URL (Netlify):
   - `REACT_APP_API_BASE_URL = https://lms-project-qc5k.onrender.com/api`
 - The frontend is designed to read `REACT_APP_API_BASE_URL` (falling back to `http://127.0.0.1:8000/api` in local development).
+
+### Live demo & test accounts
+
+- Frontend URL (Netlify): https://lms-project-frontend.netlify.app
+- Backend API base URL: https://lms-project-qc5k.onrender.com/api/
+- Django admin URL: https://lms-project-qc5k.onrender.com/admin/
+
+- Admin account (full access):
+  - Username: demoAdmin
+  - Password: password
+
+- Teacher account (teacher dashboard):
+  - Username: demoTeacher
+  - Password: TeacherPass123
+
+- Student accounts:
+  - Register via the frontend Register page at the Netlify URL above.
+  - New students are created with role student and land on their profile page after login.
+  - On first login, enrol in "Intro to Python", open the first lesson (Python module one), then take the attached quiz to see a scored result page.
 
 ### Backend (future production hardening, optional)
 - Switch to PostgreSQL or another persistent database and configure `DATABASES` via environment variables.
