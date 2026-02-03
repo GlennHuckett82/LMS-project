@@ -10,8 +10,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         User = get_user_model()
 
-        # Ensure demoTeacher exists and has role 'teacher'
+        # Ensure demoTeacher exists and has role 'teacher' with a stable demo password.
         teacher_username = "demoTeacher"
+        teacher_password = "TeacherPass123"  # strong enough to satisfy validators when set via forms
         teacher_defaults = {
             "email": "demo@example.com",
             "role": "teacher",
@@ -20,19 +21,22 @@ class Command(BaseCommand):
             username=teacher_username,
             defaults=teacher_defaults,
         )
+        # Always enforce the correct role and password so the demo login is reliable.
+        teacher_user.role = "teacher"
+        teacher_user.set_password(teacher_password)
+        teacher_user.save()
         if created:
-            teacher_user.set_password("password")
-            teacher_user.role = "teacher"
-            teacher_user.save()
-            self.stdout.write(self.style.SUCCESS(f"Created {teacher_username} with role=teacher and password='password'"))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Created {teacher_username} with role=teacher and password='{teacher_password}'"
+                )
+            )
         else:
-            if teacher_user.role != "teacher":
-                old_role = teacher_user.role
-                teacher_user.role = "teacher"
-                teacher_user.save(update_fields=["role"])
-                self.stdout.write(self.style.SUCCESS(f"Updated {teacher_username} role: {old_role} -> teacher"))
-            else:
-                self.stdout.write(f"{teacher_username} already has role=teacher")
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Ensured {teacher_username} exists with role=teacher and password='{teacher_password}'"
+                )
+            )
 
         # Ensure demoAdmin exists and has role 'admin' with staff/superuser
         admin_username = "demoAdmin"

@@ -23,9 +23,10 @@ class Command(BaseCommand):
         ]
 
         # Remove all existing courses and teacher users so we don't get duplicates.
-        self.stdout.write("Deleting existing courses, lessons, and teachers...")
+        self.stdout.write("Deleting existing courses, lessons, and teachers (preserving demoTeacher)...")
         Course.objects.all().delete()
-        User.objects.filter(role="teacher").delete()
+        # Keep the named demo teacher user so it remains available across deploys.
+        User.objects.filter(role="teacher").exclude(username="demoTeacher").delete()
         
         self.stdout.write("Creating new teachers and courses...")
         # Create each teacher and their course.
