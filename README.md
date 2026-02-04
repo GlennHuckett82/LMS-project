@@ -218,6 +218,8 @@ npm test
   - demoTeacher with password TeacherPass123 and role teacher.
   - Additional teacher users (e.g. alice, bob, etc.) with password password123 created by the seed command.
   - Demo courses: Intro to Python, Frontend with React, Data Structures, Databases, DevOps Fundamentals; each has three lessons.
+  - Note on students: admin and teacher demo accounts are recreated by a management command on each deploy, but **student accounts are not pre-seeded**. Any student you register manually (including your assessor) will exist for the lifetime of the current Render container only. On a later deploy or container restart, the SQLite database is recreated and manual student accounts are lost.
+  - Note on cold starts: the backend runs on Render's free tier, so after a period of inactivity the first request (for example, visiting `/admin` or logging in from the frontend) may take around 30–60 seconds while the service wakes up, applies migrations, and seeds demo data. If the first request seems slow, please wait and retry once; subsequent requests during the same session should be fast.
 - Start command on Render (runs on every deploy):
   - `python manage.py migrate && python manage.py init_demo_data && gunicorn lms_backend.wsgi:application --bind 0.0.0.0:$PORT`
   - This ensures all migrations are applied and demo data (users, courses, lessons, enrollment) is recreated for each fresh SQLite database on Render.
@@ -251,6 +253,7 @@ npm test
   - Register via the frontend Register page at the Netlify URL above.
   - New students are created with role student and land on their profile page after login.
   - On first login, enrol in "Intro to Python", open the first lesson (Python module one), then take the attached quiz to see a scored result page.
+  - Because the live backend uses an ephemeral SQLite database on Render, any student accounts created through the registration form are **temporary demo data**. If the service is redeployed or restarted between visits, those student accounts will need to be re-registered. This is acceptable for this course project, but is called out here so assessors understand that they should simply register a fresh student before testing the student flow.
 
 ### Backend (future production hardening, optional)
 - Switch to PostgreSQL or another persistent database and configure `DATABASES` via environment variables.
