@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'lessons',
     'quizzes',
     'rest_framework',
-    'rest_framework_simplejwt',
     # ✅ Added for CORS
     'corsheaders',
 ]
