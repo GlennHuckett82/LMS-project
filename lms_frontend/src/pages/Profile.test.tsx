@@ -21,6 +21,7 @@ describe("Profile page", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    // Default: user is already enrolled in course 1 and has one lesson.
     mockedGet.mockImplementation((url: string) => {
       if (url === "/courses/") {
         return Promise.resolve({
@@ -88,5 +89,59 @@ describe("Profile page", () => {
     fireEvent.click(viewLessonsButton);
 
     expect(await screen.findByText("Lesson 1")).toBeInTheDocument();
+  });
+
+  it("allows a student to enroll in a course", async () => {
+    const logout = jest.fn();
+
+    // For this scenario, start with no enrollments so the Enroll button is shown.
+    mockedGet.mockImplementation((url: string) => {
+      if (url === "/courses/") {
+        return Promise.resolve({
+          data: [
+            {
+              id: 1,
+              title: "Course A",
+              description: "Desc A",
+            },
+          ],
+        } as any);
+      }
+      if (url === "/enrollments/my-enrollments/") {
+        return Promise.resolve({ data: [] } as any);
+      }
+      if (url === "/lessons/") {
+        return Promise.resolve({ data: [] } as any);
+      }
+      return Promise.resolve({ data: [] } as any);
+    });
+
+    render(
+      <AuthContext.Provider
+        value={{
+          isAuthenticated: true,
+          accessToken: "token",
+          login: jest.fn(),
+          logout,
+        }}
+      >
+        <Profile />
+      </AuthContext.Provider>
+    );
+
+    // Course is visible
+    expect(await screen.findByText("Course A")).toBeInTheDocument();
+
+    const enrollButton = await screen.findByRole("button", { name: /enroll/i });
+    expect(enrollButton).toBeEnabled();
+
+    fireEvent.click(enrollButton);
+
+    await waitFor(() => {
+      expect(mockedPost).toHaveBeenCalled();
+      // First argument should be the enroll endpoint for course 1
+      const [calledUrl] = mockedPost.mock.calls[0];
+      expect(calledUrl).toBe("/enrollments/courses/1/enroll/");
+    });
   });
 });
