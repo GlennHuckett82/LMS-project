@@ -141,8 +141,14 @@ const TeacherDashboard: React.FC = () => {
                 setDescription('');
                 await fetchMyCourses();
               } catch (e: any) {
-                const msg = e?.response?.data?.detail || e?.message || 'Failed to create course';
-                setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
+                const data = e?.response?.data;
+                if (data) {
+                  // Surface DRF validation errors (e.g. {"description": ["This field may not be blank."]})
+                  setError(typeof data === 'string' ? data : JSON.stringify(data));
+                } else {
+                  const msg = e?.message || 'Failed to create course';
+                  setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
+                }
               } finally {
                 setCreating(false);
               }

@@ -12,7 +12,10 @@ class Course(models.Model):
     """
 
     title = models.CharField(max_length=200, verbose_name="Course Title")
-    description = models.TextField(verbose_name="Course Description")
+    description = models.TextField(
+        verbose_name="Course Description",
+        blank=True,
+    )
 
     # A link to the custom User model from the 'accounts' app.
     # If a teacher's account is deleted, their courses are also deleted.

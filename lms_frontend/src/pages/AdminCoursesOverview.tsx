@@ -1,5 +1,6 @@
 // Admin view to inspect teachers and their courses, and create courses on their behalf.
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 interface UserRow {
@@ -18,6 +19,7 @@ interface CourseRow {
 }
 
 const AdminCoursesOverview: React.FC = () => {
+  const navigate = useNavigate();
   const [teachers, setTeachers] = useState<UserRow[]>([]);
   const [courses, setCourses] = useState<CourseRow[]>([]);
   const [loading, setLoading] = useState(false);
@@ -158,8 +160,16 @@ const AdminCoursesOverview: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-      <h2 className="heading-xl">Admin: Teachers & Courses</h2>
-      <p>Overview of teachers with their courses. Create courses for teachers as needed.</p>
+      <div className="dashboard-header">
+        <h2 className="heading-xl">Admin: Teachers & Courses</h2>
+        <button
+          className="button"
+          onClick={() => navigate('/admin-dashboard')}
+        >
+          Back to Admin Dashboard
+        </button>
+      </div>
+      <p>Overview of teachers with their courses. Create, edit, and delete courses for teachers.</p>
 
       {error && <div className="auth-error">{error}</div>}
       {loading ? (

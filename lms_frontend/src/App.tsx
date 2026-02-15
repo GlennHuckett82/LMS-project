@@ -15,6 +15,7 @@ import QuizPage from "./pages/Quiz";
 import QuizResultPage from "./pages/QuizResult";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminCoursesOverview from "./pages/AdminCoursesOverview";
 import { AuthProvider } from "./auth/AuthContext";
 import MainLayout from "./auth/MainLayout";
 import RequireAuth from "./auth/RequireAuth";
@@ -52,6 +53,11 @@ function App() {
             <Route path="/admin-dashboard" element={
               <RequireAuth>
                 <AdminDashboard />
+              </RequireAuth>
+            } />
+            <Route path="/admin-courses" element={
+              <RequireAuth>
+                <AdminCoursesOverview />
               </RequireAuth>
             } />
 
