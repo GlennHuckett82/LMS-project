@@ -22,6 +22,11 @@ const TeacherDashboard: React.FC = () => {
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   // Load only the courses owned by the logged-in teacher; handles paginated or plain arrays.
   const fetchMyCourses = async () => {
@@ -47,6 +52,56 @@ const TeacherDashboard: React.FC = () => {
     // Initial page load: populate the table so you immediately see what you own.
     fetchMyCourses();
   }, []);
+
+  const beginEdit = (course: CourseRow) => {
+    setError(null);
+    setEditingId(course.id);
+    setEditTitle(course.title);
+    setEditDescription(course.description || '');
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditTitle('');
+    setEditDescription('');
+  };
+
+  const saveEdit = async () => {
+    if (!editingId || !editTitle.trim()) return;
+    setSavingEdit(true);
+    setError(null);
+    try {
+      const payload = {
+        title: editTitle.trim(),
+        description: editDescription.trim() || undefined,
+      };
+      const res = await api.patch(`courses/${editingId}/`, payload);
+      setCourses((prev) =>
+        prev.map((c) => (c.id === editingId ? { ...c, ...res.data } : c))
+      );
+      cancelEdit();
+    } catch (e: any) {
+      const msg = e?.response?.data?.detail || e?.message || 'Failed to update course';
+      setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const deleteCourse = async (id: number) => {
+    if (!window.confirm('Are you sure you want to delete this course?')) return;
+    setDeletingId(id);
+    setError(null);
+    try {
+      await api.delete(`courses/${id}/`);
+      setCourses((prev) => prev.filter((c) => c.id !== id));
+    } catch (e: any) {
+      const msg = e?.response?.data?.detail || e?.message || 'Failed to delete course';
+      setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className="dashboard-container">
@@ -86,8 +141,14 @@ const TeacherDashboard: React.FC = () => {
                 setDescription('');
                 await fetchMyCourses();
               } catch (e: any) {
-                const msg = e?.response?.data?.detail || e?.message || 'Failed to create course';
-                setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
+                const data = e?.response?.data;
+                if (data) {
+                  // Surface DRF validation errors (e.g. {"description": ["This field may not be blank."]})
+                  setError(typeof data === 'string' ? data : JSON.stringify(data));
+                } else {
+                  const msg = e?.message || 'Failed to create course';
+                  setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
+                }
               } finally {
                 setCreating(false);
               }
@@ -113,15 +174,74 @@ const TeacherDashboard: React.FC = () => {
               <th>Title</th>
               <th>Description</th>
               <th>Created</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {courses.map((c) => (
               <tr key={c.id}>
                 <td>{c.id}</td>
-                <td>{c.title}</td>
-                <td>{c.description || ''}</td>
+                <td>
+                  {editingId === c.id ? (
+                    <input
+                      type="text"
+                      aria-label="Edit course title"
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                    />
+                  ) : (
+                    c.title
+                  )}
+                </td>
+                <td>
+                  {editingId === c.id ? (
+                    <input
+                      type="text"
+                      aria-label="Edit course description"
+                      value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
+                    />
+                  ) : (
+                    c.description || ''
+                  )}
+                </td>
                 <td>{c.created_at || ''}</td>
+                <td>
+                  {editingId === c.id ? (
+                    <>
+                      <button
+                        className="button"
+                        disabled={savingEdit || !editTitle.trim()}
+                        onClick={saveEdit}
+                      >
+                        {savingEdit ? 'Saving…' : 'Save'}
+                      </button>
+                      <button className="button ml-2" onClick={cancelEdit}>
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="button"
+                        onClick={() => beginEdit(c)}
+                        aria-label="Edit course"
+                        title="Edit course"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="button ml-2"
+                        onClick={() => deleteCourse(c.id)}
+                        disabled={deletingId === c.id}
+                        aria-label="Delete course"
+                        title="Delete course"
+                      >
+                        {deletingId === c.id ? 'Deleting…' : 'Delete'}
+                      </button>
+                    </>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

@@ -53,7 +53,20 @@ const AdminDashboard: React.FC = () => {
     <div className="dashboard-container admin-dashboard">
       <div className="dashboard-header">
         <h2 className="heading-xl">Admin Dashboard</h2>
-        <button className="button" onClick={() => { logout(); navigate('/'); }}>Logout</button>
+        <div className="flex-row-wrap-center">
+          <button
+            className="button"
+            onClick={() => navigate('/admin-courses')}
+          >
+            Manage Courses
+          </button>
+          <button
+            className="button ml-2"
+            onClick={() => { logout(); navigate('/'); }}
+          >
+            Logout
+          </button>
+        </div>
       </div>
       <p>Welcome, admin! Manage users and courses.</p>
 

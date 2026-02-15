@@ -9,7 +9,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         User = get_user_model()
-
         # Ensure demoTeacher exists and has role 'teacher' with a stable demo password.
         teacher_username = "demoTeacher"
         teacher_password = "TeacherPass123"  # strong enough to satisfy validators when set via forms
