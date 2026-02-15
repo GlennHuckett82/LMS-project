@@ -17,6 +17,8 @@ urlpatterns = [
         lesson_detail_view,
         name='lesson_detail'
     ),
-    path("lessons/progress/", LessonProgressView.as_view(), name="lesson-progress"),
+    # API endpoint for students to mark lessons as complete
+    # Exposed at /api/lessons/progress/ to match the frontend client
+    path("progress/", LessonProgressView.as_view(), name="lesson-progress"),
     path("", include(router.urls)),
 ]
