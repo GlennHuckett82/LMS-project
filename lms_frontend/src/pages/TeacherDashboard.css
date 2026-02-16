@@ -1,5 +1,5 @@
 .card--spaced {
-	margin-bottom: 16px;
+	margin-top: 1.5rem;
 }
 
 .create-controls {
@@ -7,4 +7,42 @@
 	gap: 8px;
 	align-items: center;
 	flex-wrap: wrap;
+}
+.lessons-panel {
+	margin-top: 1rem;
+	padding: 1rem;
+	border-top: 1px solid #ddd;
+	background-color: #fafafa;
+}
+
+.lessons-list {
+	list-style: none;
+	padding-left: 0;
+	margin: 0.5rem 0 1rem;
+}
+
+.lessons-list-item,
+.lessons-list-item-spaced {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.4rem 0;
+	border-bottom: 1px dashed #e0e0e0;
+}
+
+.lesson-title-text {
+	font-weight: 500;
+}
+
+.lesson-create-form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	max-width: 100%;
+}
+
+.lesson-create-form input,
+.lesson-create-form textarea {
+	width: 100%;
+	max-width: 100%;
 }
