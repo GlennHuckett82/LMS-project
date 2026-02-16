@@ -9,6 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         User = get_user_model()
+
         # Ensure demoTeacher exists and has role 'teacher' with a stable demo password.
         teacher_username = "demoTeacher"
         teacher_password = "TeacherPass123"  # strong enough to satisfy validators when set via forms
@@ -37,8 +38,9 @@ class Command(BaseCommand):
                 )
             )
 
-        # Ensure demoAdmin exists and has role 'admin' with staff/superuser
+        # Ensure demoAdmin exists and has role 'admin' with staff/superuser and a stable demo password.
         admin_username = "demoAdmin"
+        admin_password = "AdminPass123!"  # demo-only password for both Django admin and frontend login
         admin_defaults = {
             "email": "demo@example.com",
             "role": "admin",
@@ -49,29 +51,41 @@ class Command(BaseCommand):
             username=admin_username,
             defaults=admin_defaults,
         )
-        if created:
-            admin_user.set_password("password")
+
+        # Always enforce correct flags and password so the demo login is reliable.
+        changed = []
+        if admin_user.role != "admin":
+            changed.append(("role", admin_user.role, "admin"))
             admin_user.role = "admin"
+        if not admin_user.is_staff:
+            changed.append(("is_staff", admin_user.is_staff, True))
             admin_user.is_staff = True
+        if not admin_user.is_superuser:
+            changed.append(("is_superuser", admin_user.is_superuser, True))
             admin_user.is_superuser = True
-            admin_user.save()
-            self.stdout.write(self.style.SUCCESS(f"Created {admin_username} with role=admin, is_staff, is_superuser and password='password'"))
+
+        # Reset the password each time so README and actual credentials stay in sync.
+        admin_user.set_password(admin_password)
+        admin_user.save()
+
+        if created:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Created {admin_username} with role=admin, is_staff, is_superuser and password='{admin_password}'"
+                )
+            )
+        elif changed:
+            changes = ", ".join([f"{f}: {o} -> {n}" for f, o, n in changed])
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Updated {admin_username}: {changes} and reset password to '{admin_password}'"
+                )
+            )
         else:
-            changed = []
-            if admin_user.role != "admin":
-                changed.append(("role", admin_user.role, "admin"))
-                admin_user.role = "admin"
-            if not admin_user.is_staff:
-                changed.append(("is_staff", admin_user.is_staff, True))
-                admin_user.is_staff = True
-            if not admin_user.is_superuser:
-                changed.append(("is_superuser", admin_user.is_superuser, True))
-                admin_user.is_superuser = True
-            if changed:
-                admin_user.save(update_fields=["role", "is_staff", "is_superuser"])
-                changes = ", ".join([f"{f}: {o} -> {n}" for f, o, n in changed])
-                self.stdout.write(self.style.SUCCESS(f"Updated {admin_username}: {changes}"))
-            else:
-                self.stdout.write(f"{admin_username} already configured as admin")
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Ensured {admin_username} exists with role=admin, is_staff, is_superuser and password='{admin_password}'"
+                )
+            )
 
         self.stdout.write(self.style.SUCCESS("Demo roles ensured."))

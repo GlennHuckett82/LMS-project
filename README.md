@@ -213,7 +213,7 @@ npm test
 - Django admin URL: https://lms-project-qc5k.onrender.com/admin/
 - Admin login for assessment:
   - Username: demoAdmin
-  - Password: password
+  - Password: AdminPass123!
 - Demo users and seeded data:
   - demoTeacher with password TeacherPass123 and role teacher.
   - Additional teacher users (e.g. alice, bob, etc.) with password password123 created by the seed command.
@@ -243,7 +243,7 @@ npm test
 
 - Admin account (full access):
   - Username: demoAdmin
-  - Password: password
+  - Password: AdminPass123!
 
 - Teacher account (teacher dashboard):
   - Username: demoTeacher
