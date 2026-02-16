@@ -123,3 +123,15 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://lms-project-frontend.netlify.app",
 ]
+
+# ✅ CSRF trusted origins: needed for Django admin & HTTPS on Render
+# Local development origins
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+
+render_csrf_host = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if render_csrf_host:
+    # Django expects full scheme+host entries here
+    CSRF_TRUSTED_ORIGINS.append(f"https://{render_csrf_host}")
