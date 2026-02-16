@@ -214,15 +214,14 @@ npm test
 - Admin login for assessment:
   - Username: demoAdmin
   - Password: AdminPass123!
-- Demo users and seeded data:
-  - demoTeacher with password TeacherPass123 and role teacher.
-  - Additional teacher users (e.g. alice, bob, etc.) with password password123 created by the seed command.
-  - Demo courses: Intro to Python, Frontend with React, Data Structures, Databases, DevOps Fundamentals; each has three lessons.
+- Demo users and data behaviour:
+  - `demoTeacher` with password `TeacherPass123` and role `teacher`.
+  - `demoAdmin` with password `AdminPass123!`, role `admin`, and full Django admin rights (`is_staff=True`, `is_superuser=True`).
+  - No additional teachers, courses, or lessons are auto-seeded on Render. Teachers create courses and lessons directly from the Teacher Dashboard in the frontend.
   - Note on students: admin and teacher demo accounts are recreated by a management command on each deploy, but **student accounts are not pre-seeded**. Any student you register manually (including your assessor) will exist for the lifetime of the current Render container only. On a later deploy or container restart, the SQLite database is recreated and manual student accounts are lost.
-  - Note on cold starts: the backend runs on Render's free tier, so after a period of inactivity the first request (for example, visiting `/admin` or logging in from the frontend) may take around 30–60 seconds while the service wakes up, applies migrations, and seeds demo data. If the first request seems slow, please wait and retry once; subsequent requests during the same session should be fast.
+  - Note on cold starts: the backend runs on Render's free tier, so after a period of inactivity the first request (for example, visiting `/admin` or logging in from the frontend) may take around 30–60 seconds while the service wakes up and applies migrations. If the first request seems slow, please wait and retry once; subsequent requests during the same session should be fast.
 - Start command on Render (runs on every deploy):
-  - `python manage.py migrate && python manage.py init_demo_data && gunicorn lms_backend.wsgi:application --bind 0.0.0.0:$PORT`
-  - This ensures all migrations are applied and demo data (users, courses, lessons, enrollment) is recreated for each fresh SQLite database on Render.
+  - Ensures migrations are applied and the `set_demo_roles` management command runs so `demoTeacher` and `demoAdmin` always exist with the documented credentials, then starts the web server bound to `$PORT`.
 - Environment notes:
   - `SECRET_KEY` and `DEBUG` are read from environment variables in `lms_backend/settings.py`.
   - `ALLOWED_HOSTS` always includes localhost and appends `RENDER_EXTERNAL_HOSTNAME` so the Render URL is allowed.
@@ -252,7 +251,7 @@ npm test
 - Student accounts:
   - Register via the frontend Register page at the Netlify URL above.
   - New students are created with role student and land on their profile page after login.
-  - On first login, enrol in "Intro to Python", open the first lesson (Python module one), then take the attached quiz to see a scored result page.
+  - A teacher can create demo courses and lessons via the Teacher Dashboard. Once enrolled in a course, a student can open lessons, mark them complete, and (where available) take the attached quiz to see a scored result page.
   - Because the live backend uses an ephemeral SQLite database on Render, any student accounts created through the registration form are **temporary demo data**. If the service is redeployed or restarted between visits, those student accounts will need to be re-registered. This is acceptable for this course project, but is called out here so assessors understand that they should simply register a fresh student before testing the student flow.
 
 ### Backend (future production hardening, optional)
@@ -267,3 +266,45 @@ npm test
 
 ## License
 This project is for educational purposes. No specific license applied.
+
+## Assessor Quick Guide
+
+This section is a short, practical tour for assessors reviewing the live deployment.
+
+- **Live URLs**
+  - Frontend (Netlify): https://lms-project-frontend.netlify.app
+  - Backend API base: https://lms-project-qc5k.onrender.com/api/
+  - Django admin: https://lms-project-qc5k.onrender.com/admin/
+
+- **Demo accounts**
+  - Admin (full access to admin dashboard and Django admin):
+    - Username: `demoAdmin`
+    - Password: `AdminPass123!`
+  - Teacher (Teacher Dashboard with course and lesson management):
+    - Username: `demoTeacher`
+    - Password: `TeacherPass123`
+  - Students:
+    - Register via the frontend Register page.
+    - Student accounts are temporary (SQLite on Render); if the service has been redeployed or idle for a while, simply register a fresh student.
+
+- **Recommended flows to test**
+  - **Student flow**
+    1. Register a new student account via the frontend.
+    2. Log in and land on the Profile page.
+    3. Enrol in a course.
+    4. Click "View Lessons" for that course, then "Open Lesson".
+    5. Read the lesson, click "Mark as Complete", then (if available) take the attached quiz and view the scored result.
+  - **Teacher flow**
+    1. Log in as `demoTeacher`.
+    2. Open the Teacher Dashboard.
+    3. Create a new course.
+    4. Use the "Manage Lessons" button for that course to add a lesson (title + content).
+    5. Optionally switch to a student account, enrol in that course, and confirm the new lesson appears and can be completed.
+  - **Admin flow**
+    1. Log in as `demoAdmin` on the frontend.
+    2. Open the Admin Dashboard to view and manage users and roles.
+    3. Open the Admin Courses overview to see teachers and their courses.
+    4. (Optional) Visit `/admin/` and log in with the same credentials to inspect the underlying Django models and data.
+
+- **Cold start note**
+  - Because the backend runs on Render's free tier, the very first request after a period of inactivity may take 30–60 seconds while the service wakes up and runs migrations/management commands. Subsequent requests should be much faster.

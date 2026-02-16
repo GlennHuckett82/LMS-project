@@ -110,4 +110,42 @@ In brief:
 - For a quick mental model of the user journey, the Figma prototype link and the PNGs in [docs/wireframes](docs/wireframes) are helpful.
 - For seeing the implemented UI in context, the screenshots in [docs/screenshots](docs/screenshots) provide desktop and mobile views.
 
+### Recommended live demo flows
+
+The live deployment on Render/Netlify is configured with stable demo accounts and a simple, consistent set of flows:
+
+- **Live URLs**
+  - Frontend (Netlify): https://lms-project-frontend.netlify.app
+  - Backend API base: https://lms-project-qc5k.onrender.com/api/
+  - Django admin: https://lms-project-qc5k.onrender.com/admin/
+
+- **Demo accounts** (mirrors the root README "Assessor Quick Guide")
+  - Admin:
+    - Username: `demoAdmin`
+    - Password: `AdminPass123!`
+    - Role: `admin`, `is_staff=True`, `is_superuser=True`.
+  - Teacher:
+    - Username: `demoTeacher`
+    - Password: `TeacherPass123`
+    - Role: `teacher` (no staff/superuser flags).
+  - Students:
+    - Registered via the frontend. Accounts are temporary because the live backend uses SQLite on Render; registering a new student before testing is expected.
+
+- **Suggested flows to exercise during marking**
+  - **Student**
+    1. Register a new student via the frontend.
+    2. Log in and enrol in a course.
+    3. View lessons for that course, open a lesson, mark it as complete.
+    4. (Where available) complete the attached quiz and view the scored result.
+  - **Teacher**
+    1. Log in as `demoTeacher`.
+    2. Use the Teacher Dashboard to create a course.
+    3. Click "Manage Lessons" for that course to add at least one lesson.
+    4. Optionally switch to a student account, enrol in the course, and confirm the lesson appears and can be completed.
+  - **Admin**
+    1. Log in as `demoAdmin` on the frontend.
+    2. Open the Admin Dashboard to view and manage users/roles.
+    3. Open the Admin Courses overview to see teachers and their courses.
+    4. Optionally log into `/admin/` with the same credentials to inspect raw data.
+
 If you have any questions about specific features (for example, role-based access control, enrollment logic, or lesson/quiz handling), I am happy to clarify or point you to the relevant files.
