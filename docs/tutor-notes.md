@@ -148,4 +148,8 @@ The live deployment on Render/Netlify is configured with stable demo accounts an
     3. Open the Admin Courses overview to see teachers and their courses.
     4. Optionally log into `/admin/` with the same credentials to inspect raw data.
 
-If you have any questions about specific features (for example, role-based access control, enrollment logic, or lesson/quiz handling), I am happy to clarify or point you to the relevant files.
+  ### Minor implementation note
+
+  - On the marketing-style `Courses` page (React component in `lms_frontend/src/pages/Courses.tsx`), the small, fixed list of example courses is rendered with `key={idx}` when mapping. In this specific case the array is local and never re-ordered or mutated, so using the index as the React key is harmless in practice and only a minor style consideration rather than a functional issue.
+
+
